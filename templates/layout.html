@@ -1,16 +1,27 @@
 <!DOCTYPE html>
 <html>
 <style>
-    .topnav {
-        overflow: hidden;
+    .navbar-nav > a {
+        text-transform: capitalize;
+        color: #333;
+        transition: background-color .2s, color .2s;
+    }
+
+    .navbar-nav > a:hover,
+    .navbar-nav > a:focus {
         background-color: #333;
+        color: #fff;
+    }
+
+    .navbar-nav > a.active {
+        background-color: #333;
+        color: #fff;
     }
 
     .topnav a {
         float: left;
         color: #f2f2f2;
         text-align: center;
-        padding: 14px 16px;
         text-decoration: none;
         font-size: 17px;
     }
@@ -23,6 +34,14 @@
     .topnav a.active {
         background-color: #4CAF50;
         color: white;
+    }
+
+    .option_yes {
+        width: 50%;
+    }
+
+    .option_no {
+        width: 50%;
     }
 </style>
 <head>
@@ -41,12 +60,9 @@
           href="{{ url_for('static', filename='main.css') }}">
     <link href="{{ url_for('static', filename='slider.css') }}" type="text/css"
           rel="stylesheet">
+    <script src="https://kit.fontawesome.com/fccfaa6823.js"></script>
 
-    {% if title %}
-    <title>KC Wedding - {{ title }}</title>
-    {% else %}
-    <title>KC Wedding</title>
-    {% endif %}
+    <title>Tag der Einheit</title>
 </head>
 <body>
 <header class="site-header">
@@ -59,11 +75,25 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarToggle">
+
+                {% set navigation_bar = [
+                ('rsvp', 'rsvp', 'RSVP'),
+                ('agenda', 'agenda', 'Agenda'),
+                ('location', 'location', 'Location')
+                ] -%}
+
+                {% set active_page = active_page|default('rsvp') -%}
+
                 <div class="navbar-nav mr-auto">
-                    <a class="nav-item nav-link" href="{{ url_for('rsvp') }}">RSVP</a>
-                    <a class="nav-item nav-link" href="{{ url_for('agenda') }}">Agenda</a>
-                    <a class="nav-item nav-link"
-                       href="{{ url_for('location') }}">Location</a>
+                    {% for href, id, caption in navigation_bar %}
+                    <a class="nav-item nav-link {% if id == active_page %} active {% endif %}"
+                       href="{{ url_for(href) }}">{{ caption|e }}</a>
+                    {% endfor %}
+
+                    <!--<a class="nav-item nav-link" href="{{ url_for('rsvp') }}">RSVP</a>-->
+                    <!--<a class="nav-item nav-link" href="{{ url_for('agenda') }}">Agenda</a>-->
+                    <!--<a class="nav-item nav-link"-->
+                    <!--href="{{ url_for('location') }}">Location</a>-->
                     <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
                 </div>
                 <!-- Navbar Right Side -->
@@ -74,6 +104,7 @@
         </div>
     </nav>
 </header>
+
 
 <main role="main" class="container">
 

@@ -1,10 +1,38 @@
 {% extends 'layout.html' %}
 {% block page_content %}
 
-<h1>RSVP</h1>
+<h1>Répondez S'il Vous Plaît</h1>
 
-<p>Are you coming?</p>
-<input type="checkbox" name="rsvp" checked disabled>
-<p>Hint: yes you are :)</p>
+<h1>Hallo {{ name}}</h1>
+
+
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-8">
+                <h1>Guest</h1>
+            </div>
+
+            <div class="col-4">
+
+
+                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <label class="btn btn-success active option_yes">
+                        <input type="radio" name="options"
+                               autocomplete="off"
+                               checked>
+                        <i class="fas fa-check fa-2x"></i>
+                    </label>
+                    <label class="btn btn-danger option_no">
+                        <input type="radio" name="options"
+                               autocomplete="off">
+                        <i class="fas fa-times fa-2x"></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 {% endblock page_content%}

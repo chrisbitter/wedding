@@ -41,17 +41,17 @@ login_manager.login_view = "login"
 @app.route('/agenda')
 @login_required
 def agenda():
-    return render_template('agenda.html', title='Agenda')
+    return render_template('agenda.html', title='Agenda', active_page="agenda")
 
 @app.route('/')
 @login_required
 def rsvp():
-    return render_template('rsvp.html', title='RSVP')
+    return render_template('rsvp.html', title='RSVP', active_page="rsvp")
 
 @app.route('/location')
 @login_required
 def location():
-    return render_template('location.html', title='Location')
+    return render_template('location.html', title='Location', active_page="location")
 
 
 @login_manager.user_loader
