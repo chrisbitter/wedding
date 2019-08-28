@@ -1,13 +1,48 @@
 {% extends 'layout.html' %}
 {% block page_content %}
 
-Agenda
 
-<ol>
-  <li>Eat</li>
-  <li>Sleep</li>
-  <li>Nerz</li>
-  <li>Repeat</li>
-</ol>
+<div id="agenda-app">
+
+    <h1>Agenda</h1>
+
+    <div class="card-holder">
+
+        <div v-for="agenda_item in agenda_items" class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-8">
+                        <h1>[[agenda_item.name]]</h1>
+                    </div>
+
+                    <div class="col-4">
+                        <h1>[[agenda_item.time]]</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#agenda-app',
+        data: {
+            agenda_items: []
+        },
+        created: function () {
+
+            this.agenda_items = {{ agenda_items | tojson }}
+            //
+            // item1 = {"name": "Freie Trauung", "time": "14:00"}
+            // item2 = {"name": "Sektempfang", "time": "16:00"}
+            //
+            // this.agenda_items.push(item1)
+            // this.agenda_items.push(item2)
+        },
+        delimiters: ["[[", "]]"]
+    })
+</script>
 
 {% endblock page_content%}

@@ -2,19 +2,11 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-class User(db.Model):
-    __tablename__ = 'user'
-
+class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, unique=True)
-    password_hash = db.Column(db.String)
-    email = db.Column(db.String)
-    food_choice = db.Column(db.Integer)
-    plus_one_name = db.Column(db.String)
-    plus_one_food_choice = db.Column(db.Integer)
-
-    def __repr__(self):
-        return '<User {}>'.format(self.username)
+    name = db.Column(db.String, unique=True)
+    token_hash = db.Column(db.String, unique=True)
+    admin = db.Column(db.Boolean, default=False)
 
     def is_active(self):
         """True, as all users are active."""
@@ -31,6 +23,21 @@ class User(db.Model):
     def is_anonymous(self):
         """False, as anonymous users aren't supported."""
         return False
+
+    def is_admin(self):
+        return self.admin
+
+class User(db.Model):
+    __tablename__ = 'user'
+
+    id = db.Column(db.Integer, primary_key=True)
+    group_id = db.Column(db.Integer)
+    name = db.Column(db.String)
+    rsvp = db.Column(db.Boolean, nullable=True)
+    food_choice = db.Column(db.Integer, nullable=True)
+
+    def __repr__(self):
+        return f'<{self.name} | Group {self.group_id} | RSVP {self.rsvp} | Food {self.food_choice}>'
 
     def check_password(self, password):
         return self.password_hash == str(hash(password))

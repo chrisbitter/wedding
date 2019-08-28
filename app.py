@@ -3,7 +3,7 @@ from flask import Flask, render_template, flash, url_for, redirect, request
 from flask_login import LoginManager, login_required, current_user, login_user, logout_user
 from sqlalchemy.exc import IntegrityError
 from forms import LoginForm
-import os
+from http import HTTPStatus
 import logging
 from urllib.parse import urlparse, urljoin
 from config import Config
@@ -20,7 +20,7 @@ path_agenda = "resources/agenda.csv"
 app = Flask(__name__)
 app.config.from_object(Config)
 
-from models import User, db
+from models import Group, User, db
 
 db.init_app(app)
 
@@ -31,9 +31,22 @@ try:
         db.drop_all()
         db.create_all()
 
-        admin = User(username='admin', password_hash=hash("a"))
-        db.session.add(admin)
+        group_name = "Familie Nerz"
+        token = "nerz"
+
+        group = Group(name=group_name, token_hash=hash(token))
+        db.session.add(group)
+
+        group_id = Group.query.filter_by(name=group_name).first().id
+
+        nerz1 = User(group_id=group_id, name='Sir Nerz')
+        nerz2 = User(group_id=group_id, name='Nerzdame')
+        db.session.add(nerz1)
+        db.session.add(nerz2)
         db.session.commit()
+
+        # users = User.query.filter_by(group_id=group_id).all()
+
 except IntegrityError:
     logger.warning("Database already initialized with admin account")
 
@@ -61,12 +74,37 @@ login_manager.login_view = "login"
 @app.route('/agenda')
 @login_required
 def agenda():
-    return render_template('agenda.html', title='Agenda', active_page="agenda")
+
+    agenda_items = get_agenda()
+
+    return render_template('agenda.html', title='Agenda', active_page="agenda", agenda_items=agenda_items)
 
 @app.route('/')
+@app.route('/rsvp')
 @login_required
 def rsvp():
-    return render_template('rsvp.html', title='RSVP', active_page="rsvp")
+    group = current_user
+
+    users = get_users(group.id)
+
+    print(users)
+
+    return render_template('rsvp.html', title='RSVP', active_page="rsvp", group_name=group.name, users=users)
+
+@app.route("/update_rsvp", methods=['POST'])
+@login_required
+def update_rsvp():
+
+    guest_id = request.form["id"]
+    choice = request.form["choice"]
+
+    user = User.query.filter_by(id=guest_id).first()
+
+    user.rsvp = choice == "true"
+
+    db.session.commit()
+
+    return "", HTTPStatus.NO_CONTENT
 
 @app.route('/location')
 @login_required
@@ -74,9 +112,11 @@ def location():
     return render_template('location.html', title='Location', active_page="location")
 
 
+
+
 @login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
+def load_user(group_id):
+    return Group.query.get(int(group_id))
 
 
 def is_safe_url(target):
@@ -100,20 +140,16 @@ def login():
     # handle this for us, and we use a custom LoginForm to validate.
     form = LoginForm()
 
-    # logger.debug(form.username.data)
-
     if form.validate_on_submit():
         # Login and validate the user.
         # user should be an instance of your `User` class
         # login_user(user)
-        user = User.query.filter_by(username=form.username.data).first()
 
-        if user is None or not user.check_password(form.password.data):
-            # flash('Invalid username or password')
+        group = Group.query.filter_by(token_hash=hash(form.token.data)).first()
+
+        if group is None: # or not user.check_password(form.password.data):
             return redirect(url_for('login'))
         else:
-            # flask.flash('Logged in successfully.')
-
             logger.debug("login successful")
 
             next = flask.request.args.get('next')
@@ -126,9 +162,9 @@ def login():
             if not is_safe_url(next):
                 return flask.abort(400)
 
-            login_user(user)
+            login_user(group)
 
-            return flask.redirect(next or flask.url_for('agenda'))
+            return flask.redirect(next or flask.url_for('rsvp'))
     return flask.render_template('login.html', form=form, title='Login')
 
 

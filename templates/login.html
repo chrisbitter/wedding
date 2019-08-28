@@ -2,18 +2,7 @@
 <html>
 <div class="login-page">
 
-    <div class="form">
-        <form class="login-form" method="post">
-            {{ form.hidden_tag() }}
 
-            {{ form.username() }}
-
-            {{ form.password(size=32) }}
-
-            <button type="submit">Login</button>
-
-        </form>
-    </div>
 
     <div id="clockdiv">
         <div>
@@ -38,6 +27,17 @@
         </div>
     </div>
 
+
+    <div class="form">
+        <form class="login-form" method="post">
+            {{ form.hidden_tag() }}
+
+            {{ form.token(size=32) }}
+
+            <button type="submit">Login</button>
+
+        </form>
+    </div>
 </div>
 </html>
 
@@ -124,7 +124,7 @@
         z-index: 1;
         background: #FFFFFF;
         max-width: 360px;
-        margin: 0 auto 100px;
+        margin: 100px auto 100px;
         padding: 45px;
         text-align: center;
         box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
