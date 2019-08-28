@@ -7,11 +7,15 @@ import os
 import logging
 from urllib.parse import urlparse, urljoin
 from config import Config
+import csv
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 #logger.setLevel(logging.DEBUG)
+
+path_agenda = "resources/agenda.csv"
+
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -33,6 +37,22 @@ try:
 except IntegrityError:
     logger.warning("Database already initialized with admin account")
 
+def get_users(group_id):
+    users = User.query.with_entities(User.id, User.name, User.rsvp,
+                                     User.food_choice).filter_by(
+        group_id=group_id).all()
+
+    users = [{"id": user[0], "name": user[1], "rsvp": user[2],
+              "food_choice": user[3]} for user in users]
+
+    return users
+
+def get_agenda():
+    with open(path_agenda) as f:
+
+        agenda_items = [{"name": name, "time": time} for name, time in csv.reader(f, delimiter='\t')]
+
+    return agenda_items
 
 login_manager = LoginManager()
 login_manager.init_app(app)
