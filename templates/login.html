@@ -1,7 +1,24 @@
 <!DOCTYPE html>
 <html>
-<div class="login-page">
 
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='login.css') }}">
+    <title>031020</title>
+</head>
+
+
+<div class="login-page">
 
 
     <div id="clockdiv">
@@ -58,7 +75,7 @@
             'seconds': seconds
         };
     }
-    
+
     function adjustLabel(div, label, value) {
         if (value != 1) {
             label += 's'
@@ -73,7 +90,7 @@
         var hoursSpan = clock.querySelector('.hours');
         var minutesSpan = clock.querySelector('.minutes');
         var secondsSpan = clock.querySelector('.seconds');
-        
+
         var labelYearsDiv = clock.querySelector('.label-years');
         var labelDaysDiv = clock.querySelector('.label-days');
         var labelHoursDiv = clock.querySelector('.label-hours');
@@ -88,7 +105,7 @@
             hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
             minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
             secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
-            
+
             adjustLabel(labelYearsDiv, "Year", t.years);
             adjustLabel(labelDaysDiv, "Day", t.days);
             adjustLabel(labelHoursDiv, "Hour", t.hours);
@@ -109,83 +126,3 @@
     initializeClock('clockdiv', deadline);
 
 </script>
-
-<style>
-    @import url(https://fonts.googleapis.com/css?family=Roboto:300);
-
-    .login-page {
-        text-align: center;
-        padding: 8% 0 0;
-        margin: auto;
-    }
-
-    .form {
-        position: relative;
-        z-index: 1;
-        background: #FFFFFF;
-        max-width: 360px;
-        margin: 100px auto 100px;
-        padding: 45px;
-        text-align: center;
-        box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
-    }
-
-    .form input {
-        font-family: "Roboto", sans-serif;
-        outline: 0;
-        background: #f2f2f2;
-        width: 100%;
-        border: 0;
-        margin: 0 0 15px;
-        padding: 15px;
-        box-sizing: border-box;
-        font-size: 14px;
-    }
-
-    .form button {
-        font-family: "Roboto", sans-serif;
-        text-transform: uppercase;
-        outline: 0;
-        background: #00549F;
-        width: 100%;
-        border: 0;
-        padding: 15px;
-        color: #FFFFFF;
-        font-size: 14px;
-        -webkit-transition: all 0.3 ease;
-        transition: all 0.3 ease;
-        cursor: pointer;
-    }
-
-    .form button:hover, .form button:active, .form button:focus {
-        background: #8EBAE5;
-    }
-
-    #clockdiv {
-        font-family: sans-serif;
-        color: #fff;
-        display: inline-block;
-        font-weight: 100;
-        text-align: center;
-        font-size: 30px;
-    }
-
-    #clockdiv > div {
-        padding: 10px;
-        border-radius: 3px;
-        background: #8EBAE5;
-        display: inline-block;
-    }
-
-    #clockdiv div > span {
-        padding: 15px;
-        border-radius: 3px;
-        background: #00549F;
-        display: inline-block;
-    }
-
-    .smalltext {
-        padding-top: 5px;
-        font-size: 16px;
-    }
-</style>
