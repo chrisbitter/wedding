@@ -1,6 +1,14 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:300);
+
+:root {
+  --color-1: #00549F;
+  --color-2: #8EBAE5;
+  --color-3: #444;
+  --color-4: #fff;
+}
+
 body {
-    background: #fafafa;
-    color: #333333;
+    color: var(--color-3);
     position: absolute;
     width: 100%;
     height: 100%;
@@ -12,14 +20,12 @@ body {
 
 
 h1, h2, h3, h4, h5, h6 {
-    color: #444444;
+    color: var(--color-3);
 }
 
 .bg-steel {
-    background-color: #00549F;
+    background-color: var(--color-1);
 }
-
-@import url(https://fonts.googleapis.com/css?family=Roboto:300);
 
 .login-page {
     width: 360px;
@@ -54,7 +60,7 @@ h1, h2, h3, h4, h5, h6 {
     font-family: "Roboto", sans-serif;
     text-transform: uppercase;
     outline: 0;
-    background: #00549F;
+    background: var(--color-1);
     width: 100%;
     border: 0;
     padding: 15px;
@@ -66,5 +72,5 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .form button:hover, .form button:active, .form button:focus {
-    background: #8EBAE5;
+    background: var(--color-2);
 }

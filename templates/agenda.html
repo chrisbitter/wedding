@@ -34,12 +34,6 @@
         created: function () {
 
             this.agenda_items = {{ agenda_items | tojson }}
-            //
-            // item1 = {"name": "Freie Trauung", "time": "14:00"}
-            // item2 = {"name": "Sektempfang", "time": "16:00"}
-            //
-            // this.agenda_items.push(item1)
-            // this.agenda_items.push(item2)
         },
         delimiters: ["[[", "]]"]
     })

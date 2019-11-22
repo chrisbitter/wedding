@@ -1,0 +1,121 @@
+.navbar {
+    background-color: var(--color-1);
+}
+
+.nav-item {
+    margin-right: 5px;
+}
+
+.navbar-toggler,
+.nav-link {
+    color: var(--color-4);
+    font-size: 25px;
+}
+
+.nav-link:hover,
+.nav-link:focus,
+.nav-link.active {
+    color: var(--color-1);
+    background-color: var(--color-4);
+}
+
+
+/*.nav-link {
+    margin-left: 5px;
+    text-transform: capitalize;
+    color: #fff;
+    transition: background-color .2s, color .2s;
+    font-size: 25px;
+}
+
+.nav-item:hover,
+.nav-item:focus {
+    background-color: #fff;
+    color: var(--color-1);
+}
+
+.navbar-nav .nav-item.active,
+.nav-item.active {
+    background-color: #fff;
+    color: var(--color-1);
+}*/
+
+.container {
+    text-align: center;
+}
+
+.card-holder {
+    margin-top: 25px;
+}
+
+#logo {
+    font-family: sans-serif;
+    color: #fff;
+    display: inline-block;
+    font-weight: 100;
+    text-align: center;
+    font-size: 20px;
+}
+
+#logo > div {
+    padding: 3px;
+    border-radius: 3px;
+    background: var(--color-2);
+    display: inline-block;
+}
+
+#logo div > span {
+    padding: 3px;
+    border-radius: 3px;
+    background: var(--color-1);
+    display: inline-block;
+}
+
+#logo .smalltext {
+    display: none;
+    padding-top: 2px;
+    font-size: 10px;
+}
+
+#clockdiv {
+    width: 100%;
+    font-family: sans-serif;
+    color: #fff;
+    font-weight: 100;
+    text-align: center;
+    font-size: 30px;
+    /*position: absolute;*/
+    /*bottom: 20%;*/
+    /*left: 50%;*/
+    /*transform: translate(-50%, -20%);*/
+}
+
+#clockdiv > div {
+    padding: 10px;
+    border-radius: 3px;
+    background: var(--color-2);
+    display: inline-block;
+}
+
+#clockdiv div > span {
+    padding: 15px;
+    border-radius: 3px;
+    background: var(--color-1);
+    display: inline-block;
+}
+
+#clockdiv .smalltext {
+    padding-top: 5px;
+    font-size: 16px;
+}
+
+main {
+
+    padding-top: 50px
+}
+
+footer {
+    justify-content: center;
+    align-content: center;
+    padding: 5px;
+}
