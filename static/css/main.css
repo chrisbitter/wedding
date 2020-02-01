@@ -11,11 +11,37 @@ body {
     color: var(--color-3);
     position: absolute;
     width: 100%;
+    min-width: 500px;
     height: 100%;
 
     display: flex;
     flex-direction: column;
     align-items: stretch;
+}
+
+.dot {
+  height: 15px;
+  width: 15px;
+  background-color: var(--color-2);
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot_highlight {
+  height: 25px;
+  width: 25px;
+  background-color: var(--color-1);
+}
+
+.btn-navigation {
+    color: var(--color-2);
+    font-size: 4em;
+}
+
+
+.btn-navigation:hover {
+    color: var(--color-1);
+    font-size: 4.5em;
 }
 
 

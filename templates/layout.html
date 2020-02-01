@@ -24,8 +24,8 @@
     <script src="https://kit.fontawesome.com/fccfaa6823.js"></script>
 
     <link rel="stylesheet" type="text/css"
-          href="{{ url_for('static', filename='main.css') }}">
-    <link href="{{ url_for('static', filename='layout.css') }}" type="text/css"
+          href="{{ url_for('static', filename='css/main.css') }}">
+    <link href="{{ url_for('static', filename='css/layout.css') }}" type="text/css"
           rel="stylesheet">
 
 
@@ -37,8 +37,8 @@
 
 <nav id="header-app" class="navbar navbar-expand-lg">
 
-    <div class="navbar-brand">
-        <a href="{{ url_for('welcome') }}">
+    <div class="navbar-brand mx-auto">
+        <!--a href="{{ url_for('welcome') }}"-->
         <div id="logo">
             <div>
                 <span class="years">03</span>
@@ -53,7 +53,7 @@
                 <div class="smalltext label-hours">Year</div>
             </div>
         </div>
-        </a>
+        <!--/a-->
     </div>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse"
@@ -64,7 +64,7 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
+        <ul class="navbar-nav mx-auto">
 
             <li class="nav-item">
                 <a v-bind:class="{'nav-link': true, 'active':('{{ active_page }}' == 'rsvp')}" href="{{ url_for('rsvp') }}"><i class="fas fa-check-square"></i> RSVP</a>
@@ -78,7 +78,7 @@
                 <a v-bind:class="{'nav-link': true, 'active':('{{ active_page }}' == 'location')}" href="{{ url_for('location') }}"><i class="fas fa-map-marker-alt"></i> Location</a>
             </li>
 
-            <li v-if="is_admin" class="nav-item">
+            <li v-if="{{is_admin}} == True" class="nav-item">
                 <a v-bind:class="{'nav-link': true, 'active':('{{ active_page }}' == 'overview')}" href="{{ url_for('overview') }}"><i class="fas fa-crown"></i> Overview</a>
             </li>
 
@@ -93,19 +93,19 @@
 
 </nav>
 
-<main id="main" role="main" class="container flex-grow-1">
+<main id="main" role="main" class="container flex-grow-1 d-flex justify-content-center">
 
     {% block page_content %}{% endblock %}
 
 </main>
 
-<footer id="footer" class="flex-grow-1">
+<footer id="footer" class="flex-grow-2">
 
     <div id="clockdiv" class="align-middle">
-        <div>
+        <!--<div>
             <span class="years"></span>
             <div class="smalltext label-years">Years</div>
-        </div>
+        </div>-->
         <div>
             <span class="days"></span>
             <div class="smalltext label-days">Days</div>
@@ -174,13 +174,13 @@
 
     function initializeClock(id, endtime) {
         var clock = document.getElementById(id);
-        var yearsSpan = clock.querySelector('.years');
+        // var yearsSpan = clock.querySelector('.years');
         var daysSpan = clock.querySelector('.days');
         var hoursSpan = clock.querySelector('.hours');
         var minutesSpan = clock.querySelector('.minutes');
         var secondsSpan = clock.querySelector('.seconds');
 
-        var labelYearsDiv = clock.querySelector('.label-years');
+        // var labelYearsDiv = clock.querySelector('.label-years');
         var labelDaysDiv = clock.querySelector('.label-days');
         var labelHoursDiv = clock.querySelector('.label-hours');
         var labelMinutesDiv = clock.querySelector('.label-minutes');
@@ -189,13 +189,13 @@
         function updateClock() {
             var t = getTimeRemaining(endtime);
 
-            yearsSpan.innerHTML = t.years;
+            // yearsSpan.innerHTML = t.years;
             daysSpan.innerHTML = t.days;
             hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
             minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
             secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
 
-            adjustLabel(labelYearsDiv, "Year", t.years);
+            // adjustLabel(labelYearsDiv, "Year", t.years);
             adjustLabel(labelDaysDiv, "Day", t.days);
             adjustLabel(labelHoursDiv, "Hour", t.hours);
             adjustLabel(labelMinutesDiv, "Minute", t.minutes);

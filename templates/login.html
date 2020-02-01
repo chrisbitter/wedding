@@ -13,7 +13,7 @@
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
           crossorigin="anonymous">
 
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='login.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/login.css') }}">
     <title>031020</title>
 </head>
 
@@ -22,10 +22,10 @@
 
 
     <div id="clockdiv">
-        <div>
+        <!--div>
             <span class="years"></span>
             <div class="smalltext label-years">Years</div>
-        </div>
+        </div-->
         <div>
             <span class="days"></span>
             <div class="smalltext label-days">Days</div>
@@ -85,13 +85,13 @@
 
     function initializeClock(id, endtime) {
         var clock = document.getElementById(id);
-        var yearsSpan = clock.querySelector('.years');
+        //var yearsSpan = clock.querySelector('.years');
         var daysSpan = clock.querySelector('.days');
         var hoursSpan = clock.querySelector('.hours');
         var minutesSpan = clock.querySelector('.minutes');
         var secondsSpan = clock.querySelector('.seconds');
 
-        var labelYearsDiv = clock.querySelector('.label-years');
+        //var labelYearsDiv = clock.querySelector('.label-years');
         var labelDaysDiv = clock.querySelector('.label-days');
         var labelHoursDiv = clock.querySelector('.label-hours');
         var labelMinutesDiv = clock.querySelector('.label-minutes');
@@ -100,13 +100,13 @@
         function updateClock() {
             var t = getTimeRemaining(endtime);
 
-            yearsSpan.innerHTML = t.years;
+            //yearsSpan.innerHTML = t.years;
             daysSpan.innerHTML = t.days;
             hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
             minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
             secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
 
-            adjustLabel(labelYearsDiv, "Year", t.years);
+            //adjustLabel(labelYearsDiv, "Year", t.years);
             adjustLabel(labelDaysDiv, "Day", t.days);
             adjustLabel(labelHoursDiv, "Hour", t.hours);
             adjustLabel(labelMinutesDiv, "Minute", t.minutes);

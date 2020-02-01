@@ -2,21 +2,21 @@
 {% block page_content %}
 
 
-<div id="agenda-app">
+<div id="agenda-app" class="w-100">
 
     <h1>Agenda</h1>
 
     <div class="card-holder">
 
-        <div v-for="agenda_item in agenda_items" class="card">
+        <div v-for="event in events_information" class="card">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-8">
-                        <h1>[[agenda_item.name]]</h1>
+                    <div class="col">
+                        <h2>[[event.name]]</h2>
                     </div>
 
-                    <div class="col-4">
-                        <h1>[[agenda_item.time]]</h1>
+                    <div class="col">
+                        <h2>[[event.date]] | [[event.time]]</h2>
                     </div>
                 </div>
             </div>
@@ -33,7 +33,7 @@
         },
         created: function () {
 
-            this.agenda_items = {{ agenda_items | tojson }}
+            this.events_information = {{ events_information | tojson }}
         },
         delimiters: ["[[", "]]"]
     })

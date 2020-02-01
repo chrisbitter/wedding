@@ -12,6 +12,7 @@ import csv
 import pandas as pd
 
 path_agenda = "resources/agenda.csv"
+path_events = "resources/events.csv"
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -27,11 +28,14 @@ if debug:
         db.drop_all()
         db.create_all()
 
+        events_all = "[0,1,2,3]"
+        events_limited = "[0,1,3]"
+
         # only for debugging
         group_id = 0
         group_name = "Team Nerz"
         token = "nerz"
-        group = Group(id=group_id, name=group_name, token=token, admin=True)
+        group = Group(id=group_id, name=group_name, token=token, admin=True, standesamt=True)
         db.session.add(group)
         nerz1 = Guest(group_id=group_id, name='Kristina Bitter')
         nerz2 = Guest(group_id=group_id, name='Christian Scheiderer')
@@ -42,7 +46,7 @@ if debug:
         group_id = 1
         group_name = "Familie Dachs"
         token = "dachs"
-        group = Group(id=group_id, name=group_name, token=token)
+        group = Group(id=group_id, name=group_name, token=token, standesamt=True)
         db.session.add(group)
         dachs1 = Guest(group_id=group_id, name='Sir Dachs')
         dachs2 = Guest(group_id=group_id, name='Mrs Dachs')
@@ -55,19 +59,29 @@ if debug:
         group_id = 2
         group_name = "Fuchs"
         token = "fuchs"
-        group = Group(id=group_id, name=group_name, token=token)
+        group = Group(id=group_id, name=group_name, token=token, standesamt=False)
         db.session.add(group)
         fuchs = Guest(group_id=group_id, name='Mr. Fuchs')
         db.session.add(fuchs)
         db.session.commit()
 
+def get_group_events(group_id):
+
+    group_events = eval(Guest.query.with_entities(Group.events).filter_by(
+        id=group_id).first()[0])
+
+    return group_events
 
 def get_users(group_id):
     users = Guest.query.with_entities(Guest.id, Guest.name,
                                       Guest.rsvp).filter_by(
         group_id=group_id).all()
 
-    users = [{"id": user[0], "name": user[1], "rsvp": user[2]} for user in
+    group_events = get_group_events(group_id)
+
+    users = [{"id": user[0], "name": user[1],
+              "rsvp": {event: rsvp for event, rsvp in enumerate(eval(user[2])) if
+                       event in group_events}} for user in
              users]
 
     return users
@@ -82,6 +96,7 @@ def get_all_groups():
 
         group_id = group.id
         group_name = group.name
+        group_events = get_group_events(group_id)
 
         if group.is_admin():
             group_token = None
@@ -91,7 +106,7 @@ def get_all_groups():
         users = get_users(group_id)
 
         group_data = {"id": group_id, "name": group_name, "token": group_token,
-                      "users": users}
+                      "users": users, "events": group_events}
 
         result.append(group_data)
 
@@ -106,6 +121,19 @@ def get_agenda():
     return agenda_items
 
 
+def get_events_information(group_events=None):
+    events_information = pd.read_csv(path_events)
+
+    events_information["id"] = events_information.index
+
+    events_information = events_information.to_dict(orient="records")
+
+    if group_events is not None:
+        events_information = [event for event in events_information if event["id"] in group_events]
+
+    return events_information
+
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
@@ -114,20 +142,25 @@ login_manager.login_view = "login"
 @app.route('/agenda')
 @login_required
 def agenda():
-    agenda_items = get_agenda()
+
+    group = current_group
+
+    group_events = get_group_events(group.id)
+
+    events_information = get_events_information(group_events)
 
     is_admin = current_group.is_admin()
 
     return render_template('agenda.html', title='Agenda', active_page="agenda",
-                           agenda_items=agenda_items, is_admin=is_admin)
+                           events_information=events_information, is_admin=is_admin)
 
 
 @app.route('/')
 @login_required
 def welcome():
-    group = current_group
+    # group = current_group
 
-    users = get_users(group.id)
+    # users = get_users(group.id)
 
     is_admin = current_group.is_admin()
 
@@ -142,17 +175,22 @@ def rsvp():
 
     users = get_users(group.id)
 
+    group_events = get_group_events(group.id)
+
+    events_information = get_events_information(group_events)
+
     is_admin = current_group.is_admin()
 
     return render_template('rsvp.html', title='RSVP', active_page="rsvp",
-                           group_name=group.name, users=users,
+                           group_name=group.name, events_information=events_information, users=users,
                            is_admin=is_admin)
 
 
 @app.route("/update_rsvp", methods=['POST'])
 @login_required
 def update_rsvp():
-    guest_id = request.form["id"]
+    guest_id = request.form["guest_id"]
+    event_id = int(request.form["event_id"])
     choice = request.form["choice"]
 
     if choice == "":
@@ -162,7 +200,11 @@ def update_rsvp():
 
     user = Guest.query.filter_by(id=guest_id).first()
 
-    user.rsvp = choice
+    rsvp = eval(user.rsvp)
+
+    rsvp[event_id] = choice
+
+    user.rsvp = repr(rsvp)
 
     db.session.commit()
 
@@ -183,14 +225,19 @@ def location():
 @app.route('/overview')
 @login_required
 def overview():
+
     if current_group.is_admin():
         groups = get_all_groups()
+
+        print(groups)
 
         is_admin = current_group.is_admin()
 
         return render_template('overview.html', title='Overview',
                                active_page="overview", groups=groups,
                                is_admin=is_admin)
+    else:
+        return redirect(url_for('login'))
 
 
 @app.route('/create_group', methods=['POST'])
@@ -278,7 +325,7 @@ def logout():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_group.is_authenticated:
-        return redirect(url_for('agenda'))
+        return redirect(url_for('rsvp'))
 
     form = LoginForm()
 
@@ -308,6 +355,10 @@ def login():
             return flask.redirect(next or flask.url_for('rsvp'))
     return flask.render_template('login.html', form=form, title='Login')
 
+@app.errorhandler(404)
+def page_not_found(e):
+    # your processing here
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)
