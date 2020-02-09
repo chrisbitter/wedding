@@ -78,13 +78,13 @@
                 <a v-bind:class="{'nav-link': true, 'active':('{{ active_page }}' == 'location')}" href="{{ url_for('location') }}"><i class="fas fa-map-marker-alt"></i> Location</a>
             </li>
 
-            <li v-if="{{is_admin}} == True" class="nav-item">
+            <li v-if="is_admin" class="nav-item">
                 <a v-bind:class="{'nav-link': true, 'active':('{{ active_page }}' == 'overview')}" href="{{ url_for('overview') }}"><i class="fas fa-crown"></i> Overview</a>
             </li>
 
         </ul>
         <ul class="navbar-nav">
-            <li v-if="is_admin" class="nav-item">
+            <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </li>
         </ul>
@@ -134,8 +134,8 @@
 <script>
 
 
-    var active_page = "{{ active_page }}"
-    var is_admin = "{{ is_admin }}"
+    var active_page = "{{ active_page }}";
+    var is_admin = "{{ is_admin }}" === "True";
 
 
     new Vue({
