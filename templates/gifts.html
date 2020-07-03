@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+{% block page_content %}
+
+<style>
+    .btn-group {
+        width: 100%;
+    }
+
+    .btn-group > .btn {
+        width: 50%;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+
+</style>
+
+<div id="gifts-app" class="w-100 h-100 d-flex flex-column">
+
+    <div class="flex-grow-1 d-flex row">
+        <div class="col align-self-center">
+            <i class="fas fa-gift fa-6x color-1 mb-5"></i>
+
+            <h2>
+                Hier werden wir zeitnah unsere Wünsche zusammen tragen
+            </h2>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    new Vue({
+        el: '#figts-app',
+        data: {
+            guests: [],
+        },
+        methods: {},
+
+
+        delimiters: ["[[", "]]"]
+    })
+</script>
+
+{% endblock page_content%}
+

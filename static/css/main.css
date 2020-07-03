@@ -1,10 +1,24 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:300);
 
 :root {
-  --color-1: #00549F;
-  --color-2: #8EBAE5;
-  --color-3: #444;
+    /*background-color: rgba(230, 81, 0, 0.2);*/
+
+      --color-1: rgb(200,76,0);
+  --color-2: rgba(200,76,0,0.3);
+  --color-3: #888;
   --color-4: #fff;
+}
+
+.color-1 {
+    color: var(--color-1)
+}
+
+.progress-bar {
+    background-color: var(--color-3);
+}
+
+.progress-bar-success {
+    background-color: var(--color-1);
 }
 
 body {
@@ -42,11 +56,6 @@ body {
 .btn-navigation:hover {
     color: var(--color-1);
     font-size: 4.5em;
-}
-
-
-h1, h2, h3, h4, h5, h6 {
-    color: var(--color-3);
 }
 
 .bg-steel {

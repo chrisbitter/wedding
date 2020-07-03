@@ -1,4 +1,13 @@
-@import url(https://fonts.googleapis.com/css?family=Roboto:300);
+@import url(https://fonts.googleapis.com/css?family=Notable:300);
+
+:root {
+    /*background-color: rgba(230, 81, 0, 0.2);*/
+
+  --color-1: rgb(200,76,0);
+  --color-2: rgba(200,76,0,0.3);
+  --color-3: #888;
+  --color-4: #fff;
+}
 
 .login-page {
     text-align: center;
@@ -18,7 +27,7 @@
 }
 
 .form input {
-    font-family: "Roboto", sans-serif;
+    font-family: "Notable", sans-serif;
     outline: 0;
     background: #f2f2f2;
     width: 100%;
@@ -30,10 +39,10 @@
 }
 
 .form button {
-    font-family: "Roboto", sans-serif;
+    font-family: "Notable", sans-serif;
     text-transform: uppercase;
     outline: 0;
-    background: #00549F;
+    background: var(--color-3);
     width: 100%;
     border: 0;
     padding: 15px;
@@ -45,7 +54,7 @@
 }
 
 .form button:hover, .form button:active, .form button:focus {
-    background: #8EBAE5;
+    background: var(--color-1);
 }
 
 #clockdiv {
@@ -60,18 +69,20 @@
 #clockdiv > div {
     padding: 10px;
     border-radius: 3px;
-    background: #8EBAE5;
+    background: var(--color-1);
     display: inline-block;
 }
 
 #clockdiv div > span {
     padding: 15px;
     border-radius: 3px;
-    background: #00549F;
+    background: white;
     display: inline-block;
+    color: var(--color-3);
 }
 
 .smalltext {
     padding-top: 5px;
     font-size: 16px;
+    display: none;
 }

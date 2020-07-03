@@ -1,44 +1,39 @@
 .navbar {
-    background-color: var(--color-1);
+    background-color: white;
+
+    border-bottom: 2px solid rgba(12, 12, 12, 0.3);
+    box-shadow: 0 0 7px rgba(0, 0, 0, .1) !important;
+    -moz-box-shadow: 0 0 7px rgba(0, 0, 0, .1) !important;
+    -webkit-box-shadow: 0 0 7px rgba(0, 0, 0, .1) !important;
 }
 
 .nav-item {
     margin-right: 5px;
 }
 
+.hint,
+.hint.link,
+.hint.visited,
+.hint.hover {
+    color: var(--color-1);
+}
+
+
 .navbar-toggler,
 .nav-link {
-    color: var(--color-4);
+    /*color: var(--color-4);*/
     font-size: 25px;
+    color: var(--color-3);
 }
 
 .nav-link:hover,
 .nav-link:focus,
 .nav-link.active {
     color: var(--color-1);
-    background-color: var(--color-4);
+    font-weight: bold;
+
 }
 
-
-/*.nav-link {
-    margin-left: 5px;
-    text-transform: capitalize;
-    color: #fff;
-    transition: background-color .2s, color .2s;
-    font-size: 25px;
-}
-
-.nav-item:hover,
-.nav-item:focus {
-    background-color: #fff;
-    color: var(--color-1);
-}
-
-.navbar-nav .nav-item.active,
-.nav-item.active {
-    background-color: #fff;
-    color: var(--color-1);
-}*/
 
 .container {
     text-align: center;
@@ -60,21 +55,16 @@
 #logo > div {
     padding: 3px;
     border-radius: 3px;
-    background: var(--color-2);
+    background: var(--color-1);
+    color: var(--color-3);
     display: inline-block;
 }
 
 #logo div > span {
     padding: 3px;
     border-radius: 3px;
-    background: var(--color-1);
+    background: white;
     display: inline-block;
-}
-
-#logo .smalltext {
-    display: none;
-    padding-top: 2px;
-    font-size: 10px;
 }
 
 #clockdiv {
@@ -84,38 +74,48 @@
     font-weight: 100;
     text-align: center;
     font-size: 30px;
-    /*position: absolute;*/
-    /*bottom: 20%;*/
-    /*left: 50%;*/
-    /*transform: translate(-50%, -20%);*/
 }
 
 #clockdiv > div {
     padding: 10px;
     border-radius: 3px;
-    background: var(--color-2);
+    background: var(--color-1);
     display: inline-block;
+
 }
 
 #clockdiv div > span {
     padding: 15px;
     border-radius: 3px;
-    background: var(--color-1);
+    background: white;
     display: inline-block;
+    color: var(--color-3);
 }
 
 #clockdiv .smalltext {
     padding-top: 5px;
     font-size: 16px;
+    display: none;
 }
 
 main {
-
-    padding-top: 50px
+    padding-top: 3rem
 }
 
 footer {
     justify-content: center;
     align-content: center;
     padding: 5px;
+}
+
+.agenda-item {
+    color: var(--color-3);
+    font-size: 25px;
+}
+
+.agenda-item.hover,
+.agenda-item.active {
+    border-color: var(--color-3);
+    color: var(--color-1);
+    font-weight: bold;
 }

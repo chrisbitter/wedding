@@ -2,26 +2,52 @@
 {% block page_content %}
 
 
-<div id="agenda-app" class="w-100">
+<div id="agenda-app" class="w-100 h-100 d-flex flex-column">
 
-    <h1>Agenda</h1>
+    <div class="row">
 
-    <div class="card-holder">
 
-        <div v-for="event in events_information" class="card">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col">
-                        <h2>[[event.name]]</h2>
-                    </div>
-
-                    <div class="col">
-                        <h2>[[event.date]] | [[event.time]]</h2>
-                    </div>
+        <div v-for="event in events_information" class="col">
+            <div :class="['nav-link', {'active': event === active_event}]">
+                <div class="card-head" v-on:click="active_event = event">
+                    [[event.name]]
                 </div>
             </div>
         </div>
 
+
+    </div>
+    <div v-if="active_event" class="row">
+        <div class="col">
+            <div class="card p-3">
+
+
+<!--                <span class="fa-stack fa-1x">-->
+<!--  <i class="fa fa-circle fa-stack-2x" :style="iconStyle(active_event.color)"></i>-->
+<!--  <i class="fa fa-star fa-stack-1x" style="color: white"></i>-->
+<!--</span>-->
+<!--                <div class="row"><div class="col">Wann</div><div class="col">[[active_event.date]] | [[active_event.time]]</div></div>-->
+<!--                <div class="row"><div class="col">Was</div><div class="col">[[active_event.description]]</div></div>-->
+<!--                <div class="row"><div class="col">Wo</div><div class="col">[[active_event.location]]</div></div>-->
+<!--                <div class="row"><div class="col">Dresscode</div><div class="col">[[active_event.dresscode]]</div></div>-->
+                <h3><b>Wann</b></h3><h4>[[active_event.date]] | [[active_event.time]]</h4>
+                <h3><b>Was</b></h3><h4>[[active_event.description]]</h4>
+                <h3><b>Wo</b></h3><h4>[[active_event.location]]</h4>
+                <h3><b>Dresscode</b></h3><h4>[[active_event.dresscode]]</h4>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="w-100 flex-grow-1">
+
+        <iframe v-if="events_information.length > 3"
+                src="https://www.google.com/maps/d/embed?mid=1SOzTXAIbt88wu-OkQZzLrkoAmu-FAXcR&hl=de"
+                class="w-100 h-100"></iframe>
+        <iframe v-else
+                src="https://www.google.com/maps/d/embed?mid=15Vubv8srISUBAlXKItmdS416F0YcFaJ4&hl=de"
+                class="w-100 h-100"></iframe>
     </div>
 </div>
 
@@ -29,11 +55,31 @@
     new Vue({
         el: '#agenda-app',
         data: {
-            agenda_items: []
+            events_information: [],
+            active_event: null
+        },
+        methods: {
+            iconStyle: function (color) {
+                console.log(color)
+                const [r, g, b, a] = color;
+                return {
+                    color: `rgba(${r},${g},${b},${a})`
+                };
+            }
         },
         created: function () {
-
+            // @formatter:off
             this.events_information = {{ events_information | tojson }}
+            // @formatter:on
+
+            this.events_information.sort(function (first, second) {
+                first_date = first.date.split('.').reverse().join('');
+                second_date = second.date.split('.').reverse().join('');
+
+                return first_date > second_date;
+            });
+
+            this.active_event = this.events_information[0]
         },
         delimiters: ["[[", "]]"]
     })

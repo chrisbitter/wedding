@@ -1,18 +1,19 @@
+import os
+from http import HTTPStatus
+from urllib.parse import urlparse, urljoin
+
 import flask
+import pandas as pd
 from flask import Flask, render_template, url_for, redirect, request, jsonify
 from flask_login import LoginManager, login_required, \
     current_user as current_group, login_user, logout_user
-from sqlalchemy.exc import IntegrityError
-from forms import LoginForm
-from http import HTTPStatus
-import logging
-from urllib.parse import urlparse, urljoin
+
 from config import Config
-import csv
-import pandas as pd
+from forms import LoginForm
 
 path_agenda = "resources/agenda.csv"
 path_events = "resources/events.csv"
+path_images = "static/img"
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -35,7 +36,8 @@ if debug:
         group_id = 0
         group_name = "Team Nerz"
         token = "nerz"
-        group = Group(id=group_id, name=group_name, token=token, admin=True, standesamt=True)
+        group = Group(id=group_id, name=group_name, token=token, admin=True,
+                      standesamt=True)
         db.session.add(group)
         nerz1 = Guest(group_id=group_id, name='Kristina Bitter')
         nerz2 = Guest(group_id=group_id, name='Christian Scheiderer')
@@ -46,7 +48,8 @@ if debug:
         group_id = 1
         group_name = "Familie Dachs"
         token = "dachs"
-        group = Group(id=group_id, name=group_name, token=token, standesamt=True)
+        group = Group(id=group_id, name=group_name, token=token,
+                      standesamt=True)
         db.session.add(group)
         dachs1 = Guest(group_id=group_id, name='Sir Dachs')
         dachs2 = Guest(group_id=group_id, name='Mrs Dachs')
@@ -59,28 +62,31 @@ if debug:
         group_id = 2
         group_name = "Fuchs"
         token = "fuchs"
-        group = Group(id=group_id, name=group_name, token=token, standesamt=False)
+        group = Group(id=group_id, name=group_name, token=token,
+                      standesamt=False)
         db.session.add(group)
         fuchs = Guest(group_id=group_id, name='Mr. Fuchs')
         db.session.add(fuchs)
         db.session.commit()
 
-def get_group_events(group_id):
 
-    group_events = eval(Guest.query.with_entities(Group.events).filter_by(
+def get_group_events(group_id):
+    group_events = eval(Group.query.with_entities(Group.events).filter_by(
         id=group_id).first()[0])
 
     return group_events
 
+
 def get_users(group_id):
-    users = Guest.query.with_entities(Guest.id, Guest.name,
+    users = Guest.query.with_entities(Guest.id, Guest.name, Guest.male,
                                       Guest.rsvp).filter_by(
         group_id=group_id).all()
 
     group_events = get_group_events(group_id)
 
-    users = [{"id": user[0], "name": user[1],
-              "rsvp": {event: rsvp for event, rsvp in enumerate(eval(user[2])) if
+    users = [{"id": user[0], "name": user[1], "male": user[2],
+              "rsvp": {event: rsvp for event, rsvp in enumerate(eval(user[3]))
+                       if
                        event in group_events}} for user in
              users]
 
@@ -124,12 +130,18 @@ def get_agenda():
 def get_events_information(group_events=None):
     events_information = pd.read_csv(path_events)
 
+    events_information.color = events_information.color.apply(eval)
+
     events_information["id"] = events_information.index
 
     events_information = events_information.to_dict(orient="records")
 
     if group_events is not None:
-        events_information = [event for event in events_information if event["id"] in group_events]
+        events_information = [event for event in events_information if
+                              event["id"] in group_events]
+
+    print(events_information)
+
 
     return events_information
 
@@ -142,7 +154,6 @@ login_manager.login_view = "login"
 @app.route('/agenda')
 @login_required
 def agenda():
-
     group = current_group
 
     group_events = get_group_events(group.id)
@@ -152,20 +163,31 @@ def agenda():
     is_admin = current_group.is_admin()
 
     return render_template('agenda.html', title='Agenda', active_page="agenda",
-                           events_information=events_information, is_admin=is_admin)
+                           events_information=events_information,
+                           is_admin=is_admin)
 
 
 @app.route('/')
-@login_required
-def welcome():
-    # group = current_group
+def index():
+    # redirect(url_for('rsvp'))
+    return redirect(url_for('home'))
 
-    # users = get_users(group.id)
+
+@app.route('/home')
+@login_required
+def home():
+    group = current_group
+
+    users = get_users(group.id)
+
+    images = [os.path.join(path_images, img) for img in
+              os.listdir(path_images)]
 
     is_admin = current_group.is_admin()
 
-    return render_template('welcome.html', title='031020',
-                           active_page="welcome", is_admin=is_admin)
+    return render_template('home.html', title='031020',
+                           active_page="home", is_admin=is_admin,
+                           images=images, group_name=group.name, users=users)
 
 
 @app.route('/rsvp')
@@ -182,7 +204,8 @@ def rsvp():
     is_admin = current_group.is_admin()
 
     return render_template('rsvp.html', title='RSVP', active_page="rsvp",
-                           group_name=group.name, events_information=events_information, users=users,
+                           group_name=group.name,
+                           events_information=events_information, users=users,
                            is_admin=is_admin)
 
 
@@ -213,19 +236,43 @@ def update_rsvp():
     return "", HTTPStatus.NO_CONTENT
 
 
-@app.route('/location')
+@app.route('/gifts')
 @login_required
-def location():
+def gifts():
     is_admin = current_group.is_admin()
 
-    return render_template('location.html', title='Location',
-                           active_page="location", is_admin=is_admin)
+    return render_template('gifts.html', title='Wünsche',
+                           active_page="gifts", is_admin=is_admin)
+
+
+
+@app.route('/corona')
+@login_required
+def corona():
+    is_admin = current_group.is_admin()
+
+    return render_template('corona.html', title='Corona',
+                           active_page="corona", is_admin=is_admin)
+
+
+@app.route('/hotels')
+@login_required
+def hotels():
+    group = current_group
+
+    group_events = get_group_events(group.id)
+
+    events_information = get_events_information(group_events)
+
+    is_admin = current_group.is_admin()
+
+    return render_template('hotels.html', title='Hotels', events_information=events_information,
+                           active_page="hotels", is_admin=is_admin)
 
 
 @app.route('/overview')
 @login_required
 def overview():
-
     if current_group.is_admin():
         groups = get_all_groups()
 
@@ -355,10 +402,12 @@ def login():
             return flask.redirect(next or flask.url_for('rsvp'))
     return flask.render_template('login.html', form=form, title='Login')
 
+
 @app.errorhandler(404)
 def page_not_found(e):
     # your processing here
     return redirect(url_for('login'))
+
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)

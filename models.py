@@ -51,12 +51,13 @@ class Guest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     group_id = db.Column(db.Integer)
     name = db.Column(db.String)
+    male = db.Column(db.Boolean, default=True)
     rsvp = db.Column(db.String, default="[None, None, None, None]")
 
     # food_choice = db.Column(db.Integer, nullable=True)
 
     def __repr__(self):
-        return f'Guest <{self.name} | Group {self.group_id} | RSVP {self.rsvp}>'
+        return f'Guest <{self.name} | {"male" if self.male else "female"} | Group {self.group_id} | RSVP {self.rsvp}>'
 
     def check_password(self, password):
         return self.password_hash == str(hash(password))

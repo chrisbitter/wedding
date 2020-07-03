@@ -1,0 +1,147 @@
+{% extends 'layout.html' %}
+{% block page_content %}
+
+<style>
+    .photobanner {
+        position: relative;
+        height: 233px;
+        width: 100%;
+        margin-bottom: 30px;
+    }
+
+    .photobanner img {
+        top: 0px;
+        height: 100%;
+        /*width: 350px;*/
+        box-shadow: 2px 2px 8px #8a8a8a;
+        position: absolute;
+
+        image-orientation: from-image;
+    }
+
+
+</style>
+
+<div id="home-app" class="align-self-center w-100 h-100  d-flex flex-column">
+
+
+    <div class="photobanner"><img v-for="(image, idx) in images" :src="image"
+                                  alt="...">
+    </div>
+
+    <div class="flex-grow-1 d-flex row">
+        <div class="col align-self-center">
+            <h2 class="color-1">
+                <span v-if="guests.length === 1">
+                    Liebe<span v-show="guests[0].male">r</span> [[guests[0].name]]!
+                </span>
+
+                <span v-else>
+                    Liebe [[group_name]]!
+                </span>
+            </h2>
+
+            <h4>
+                Wir heiraten und laden <span
+                    v-if="guests.length === 1">dich</span><span
+                    v-else>euch</span> ganz herzlich ein mit uns zu feiern!
+                <br>
+                <br>
+
+                Auf dieser Website finde<span
+                    v-if="guests.length === 1">st du</span><span
+                    v-else>t ihr</span> alle wichtige Informationen und Updates zur
+                Hochzeit.
+                <br>
+
+                Sag<span v-if="guests.length > 1">t</span> uns bitte zeitnah
+                unter RSVP Bescheid, ob wir mit
+                <span v-if="guests.length === 1">dir</span><span
+                    v-else>euch</span> rechnen dürfen.
+                <br>
+                <br>
+
+                Für eventuelle Beiträge zum Programm melde<span v-if="guests.length > 1">t euch</span><span v-else> dich</span> gerne bei unseren Trauzeugen <a class="color-1" href="mailto:hochzeit031020.programm@gmail.com">Jana, Lisa und Timon</a>.
+
+                <br>
+                <br>
+                Wir freuen uns darauf, mit <span
+                    v-if="guests.length === 1">dir</span><span
+                    v-else>euch</span> zu feiern!
+                <br><br>
+                <h3 class="color-1">Kristina & Christian</h3>
+
+
+            </h4>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+    new Vue({
+        el: '#home-app',
+        data: {
+            images: [],
+            guests: [],
+            group_name: "",
+        },
+        created: function () {
+            // @formatter:off
+            this.images = {{ images | tojson }}
+            this.guests = {{ users | tojson }}
+            this.group_name = {{ group_name | tojson }}
+            // @formatter:on
+        },
+        delimiters: ["[[", "]]"]
+    })
+
+
+    const speed = 2; // 2 pixels per frame at 60 frames per second
+    const banner = document.getElementsByClassName('photobanner')[0];
+    // build images array
+    let images = [
+        ...banner.getElementsByTagName('img')
+    ];
+
+    // initialize images positions
+    let rects = images.map((img, index) => {
+        const style = getComputedStyle(img);
+        const rect = {
+            left: index * (350 + 50) - 350,
+            top: 0,
+            width: 350,
+            height: parseInt(style.height, 10)
+        };
+        return rect;
+    });
+
+    function animate() {
+        const l = images.length;
+        for (let i = 0; i < l; i++) {
+            const img = images[i];
+            const rect = rects[i];
+            rect.left -= speed;
+            if (rect.left + rect.width < -rect.width) {
+                // this image if fully overflowing left, put it at the end of the image list both in position and in images and rects
+                const lastRect = rects[rects.length - 1];
+                rect.left = lastRect.left + lastRect.width + 50;
+                images = images.slice(1, l);
+                images.push(img);
+                rects = rects.slice(1, l);
+                rects.push(rect);
+                i--;
+            }
+            // change the actual image style according to new rect value
+            img.style.left = rect.left + 'px';
+        }
+        ;
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+</script>
+
+
+{% endblock page_content%}

@@ -1,0 +1,63 @@
+{% extends 'layout.html' %}
+{% block page_content %}
+
+<style>
+    .btn-group {
+        width: 100%;
+    }
+
+    .btn-group > .btn {
+        width: 50%;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+
+</style>
+
+<div class="w-100 h-100 d-flex flex-column">
+
+    <div class="flex-grow-1 d-flex row">
+        <div class="col align-self-center">
+            <i class="fas fa-virus fa-6x color-1 mb-5"></i>
+
+            <h2>
+                Wir hoffen sehr, dass wir unsere Hochzeit wie geplant feiern dürfen!
+                <br>
+                <br>
+
+                Wir müssen jedoch darauf hinweisen, dass die Feier unter den aktuellen Regelungen in Nordrhein-Westfalen noch nicht gestattet ist.
+                <br>
+                <br>
+                Daher hoffen wir auf eure Flexibilität und bitten euch, bei euren Hotel-Reservierungen auf die Möglichkeit zur Stornierung zu achten.
+                <br>
+                <br>
+                Finale Sicherheit wird es erst wenige Wochen vor der Feier geben.
+                <br>
+                <br>
+                An dieser Stelle werden wir euch über relevante Regelungen informieren.
+
+            </h2>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    new Vue({
+        el: '#figts-app',
+        data: {
+            guests: [],
+        },
+        methods: {},
+
+
+        delimiters: ["[[", "]]"]
+    })
+</script>
+
+{% endblock page_content%}
+

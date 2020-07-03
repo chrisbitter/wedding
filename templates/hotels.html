@@ -1,0 +1,55 @@
+{% extends 'layout.html' %}
+{% block page_content %}
+
+
+<div id="hotels-app" class="w-100 h-100 d-flex flex-column">
+    <div class="w-100">
+        <h3>Aufgrund guter Taxi-Distanz empfehlen wir diese Hotels</h3>
+    </div>
+
+    <div class="w-100 flex-grow-1 mt-3">
+
+        <iframe v-if="events_information.length > 3"
+                src="https://www.google.com/maps/d/embed?mid=1SOzTXAIbt88wu-OkQZzLrkoAmu-FAXcR&hl=de"
+                class="w-100 h-100"></iframe>
+        <iframe v-else
+                src="https://www.google.com/maps/d/embed?mid=1IKsulnnoHYwW7JPTvqlvEWG6CAwseqlz&hl=de"
+                class="w-100 h-100"></iframe>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#hotels-app',
+        data: {
+            events_information: [],
+            active_event: null
+        },
+        methods: {
+            iconStyle: function (color) {
+                console.log(color)
+                const [r, g, b, a] = color;
+                return {
+                    color: `rgba(${r},${g},${b},${a})`
+                };
+            }
+        },
+        created: function () {
+            // @formatter:off
+            this.events_information = {{ events_information | tojson }}
+            // @formatter:on
+
+            this.events_information.sort(function (first, second) {
+                first_date = first.date.split('.').reverse().join('');
+                second_date = second.date.split('.').reverse().join('');
+
+                return first_date > second_date;
+            });
+
+            this.active_event = this.events_information[0]
+        },
+        delimiters: ["[[", "]]"]
+    })
+</script>
+
+{% endblock page_content%}
