@@ -19,26 +19,280 @@
 
 <div id="gifts-app" class="w-100 h-100 d-flex flex-column">
 
-    <div class="flex-grow-1 d-flex row">
-        <div class="col align-self-center">
-            <i class="fas fa-gift fa-6x color-1 mb-5"></i>
+    <h2 class="mb-5">
+        Am meisten freuen wir uns darüber, unseren besonderen Tag mit euch
+        allen feiern zu dürfen!<br>
+        Falls ihr uns darüber hinaus eine Freude machen möchtet, haben wir hier
+        unsere Wünsche zusammen getragen.<br>
+    </h2>
 
-            <h2>
-                Hier werden wir zeitnah unsere Wünsche zusammen tragen
-            </h2>
+    <div v-for="gift in gifts" v-if="gift.group_id === group_id" class="card mb-3">
+        <div class="row">
+            <div class="col-2  d-flex justify-content-center">
+                <img class="w-100 align-self-center" :src="gift.image" alt="">
+            </div>
+            <div class="col d-flex align-content-center flex-wrap">
+                <div class="text-left">
 
+                    <h3><b>[[gift.name]]</b></h3>
+                    <h4 v-if="gift.description !== null">
+                        [[gift.description]]</h4>
+                    <a :href="gift.link" target="_blank"><h4>Link</h4></a>
+                </div>
+            </div>
+            <div class="col-2 d-flex align-content-center flex-wrap">
+                <h4>Preis: [[gift.price]]€</h4>
+            </div>
+
+            <div class="col-2 d-flex align-content-center flex-wrap">
+
+                <div v-if="gift.group_id === null | gift.group_id === group_id"
+                     class="container">
+                    <div v-on:click="reserve(gift.id)"
+                         v-if="gift.group_id === null"
+                         class="btn btn-success w-100"
+                         style="{white-space: normal}">Reservieren
+                    </div>
+                    <div v-on:click="unreserve(gift.id)" v-else
+                         class="btn btn-secondary w-100"
+                         style="white-space: normal">Reservierung aufheben
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div v-if="gift.group_id !== null & gift.group_id !== group_id"
+             class="w-100 h-100 position-absolute"
+             style="background: rgba(10, 10, 10, 0.3)">
+            <div class="container d-flex justify-content-center w-100 h-100">
+                <div class="row justify-content-center align-self-center">
+                    <h1 class="color-1"><b>Reserviert</b></h1>
+                </div>
+            </div>
         </div>
     </div>
+
+    <div v-for="gift in gifts" v-if="gift.group_id === null" class="card mb-3">
+        <div class="row">
+            <div class="col-2  d-flex justify-content-center">
+                <img class="w-100 align-self-center" :src="gift.image" alt="">
+            </div>
+            <div class="col d-flex align-content-center flex-wrap">
+                <div class="text-left">
+
+                    <h3><b>[[gift.name]]</b></h3>
+                    <h4 v-if="gift.description !== null">
+                        [[gift.description]]</h4>
+                    <a :href="gift.link" target="_blank"><h4>Link</h4></a>
+                </div>
+            </div>
+            <div class="col-2 d-flex align-content-center flex-wrap">
+                <h4>Preis: [[gift.price]]€</h4>
+            </div>
+
+            <div class="col-2 d-flex align-content-center flex-wrap">
+
+                <div v-if="gift.group_id === null | gift.group_id === group_id"
+                     class="container">
+                    <div v-on:click="reserve(gift.id)"
+                         v-if="gift.group_id === null"
+                         class="btn btn-success w-100"
+                         style="{white-space: normal}">Reservieren
+                    </div>
+                    <div v-on:click="unreserve(gift.id)" v-else
+                         class="btn btn-secondary w-100"
+                         style="white-space: normal">Reservierung aufheben
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div v-if="gift.group_id !== null & gift.group_id !== group_id"
+             class="w-100 h-100 position-absolute"
+             style="background: rgba(10, 10, 10, 0.3)">
+            <div class="container d-flex justify-content-center w-100 h-100">
+                <div class="row justify-content-center align-self-center">
+                    <h1 class="color-1"><b>Reserviert</b></h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <i class="fas fa-gift fa-6x color-1 mt-5 mb-5"></i>
+
+
+    <h2 class="mb-5">
+
+        Auch freuen wir uns über finanzielle Unterstützung<br>
+    </h2>
+
+    <div class="card mb-3">
+        <div class="row">
+            <div class="col-2 d-flex justify-content-center">
+                <img class="w-100 align-self-center"
+                     src="{{ url_for('static', filename='img/gifts/welpe.jpg') }}"
+                     alt="">
+            </div>
+            <div class="col d-flex align-content-center flex-wrap">
+                <div class="text-left">
+
+                    <h3><b>Hund</b></h3>
+                    <h4>
+                        Wir planen Familienzuwachs! Und der braucht Körbchen, Leine und gaaanz viele Knochen!
+                    </h4>
+                </div>
+            </div>
+
+            <div class="col-2 d-flex align-content-center flex-wrap"></div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="row">
+            <div class="col-2 d-flex justify-content-center">
+                <img class="w-100 align-self-center"
+                     src="{{ url_for('static', filename='img/gifts/flat.jpg') }}"
+                     alt="">
+            </div>
+            <div class="col d-flex align-content-center flex-wrap">
+                <div class="text-left">
+
+                    <h3><b>Wohnung</b></h3>
+                    <h4>
+                        Zu einem neuen Lebensabschnitt gehört auch eine neue Wohnung!
+                        Nach unserer Hochzeit werden wir schöne Gardinen,
+                        gemütliche Sessel und einer Balkon-Lounge für unser neues Zuhause aussuchen.
+                    </h4>
+                </div>
+            </div>
+
+            <div class="col-2 d-flex align-content-center flex-wrap"></div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="row">
+            <div class="col-2 d-flex justify-content-center">
+                <img class="w-100 align-self-center"
+                     src="{{ url_for('static', filename='img/gifts/reise.jpg') }}"
+                     alt="">
+            </div>
+            <div class="col d-flex align-content-center flex-wrap">
+                <div class="text-left">
+
+                    <h3><b>Hochzeitsreise</b></h3>
+                    <h4>
+                        Wenn das Reisen wieder erlaubt ist werden wir unsere Hochzeitsreise nachholen!
+                        Egal wann und wo: Wir werden uns mit Wellness und romantischen Restaurantbesuchen verwöhnen!
+                    </h4>
+                </div>
+            </div>
+
+            <div class="col-2 d-flex align-content-center flex-wrap"></div>
+        </div>
+    </div>
+
+<!--    <div v-for="gift in gifts" v-if="gift.group_id !== null" class="card mb-3">-->
+<!--        <div class="row">-->
+<!--            <div class="col-2  d-flex justify-content-center">-->
+<!--                <img class="w-100 align-self-center" :src="gift.image" alt="">-->
+<!--            </div>-->
+<!--            <div class="col d-flex align-content-center flex-wrap">-->
+<!--                <div class="text-left">-->
+
+<!--                    <h3><b>[[gift.name]]</b></h3>-->
+<!--                    <h4 v-if="gift.description !== null">-->
+<!--                        [[gift.description]]</h4>-->
+<!--                    <a :href="gift.link" target="_blank"><h4>Link</h4></a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="col-2 d-flex align-content-center flex-wrap">-->
+<!--                <h4>Preis: [[gift.price]]€</h4>-->
+<!--            </div>-->
+
+<!--            <div class="col-2 d-flex align-content-center flex-wrap">-->
+
+<!--                <div v-if="gift.group_id === null | gift.group_id === group_id"-->
+<!--                     class="container">-->
+<!--                    <div v-on:click="reserve(gift.id)"-->
+<!--                         v-if="gift.group_id === null"-->
+<!--                         class="btn btn-success w-100"-->
+<!--                         style="{white-space: normal}">Reservieren-->
+<!--                    </div>-->
+<!--                    <div v-on:click="unreserve(gift.id)" v-else-->
+<!--                         class="btn btn-secondary w-100"-->
+<!--                         style="white-space: normal">Reservierung aufheben-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div v-if="gift.group_id !== null & gift.group_id !== group_id"-->
+<!--             class="w-100 h-100 position-absolute"-->
+<!--             style="background: rgba(10, 10, 10, 0.3)">-->
+<!--            <div class="container d-flex justify-content-center w-100 h-100">-->
+<!--                <div class="row justify-content-center align-self-center">-->
+<!--                    <h1 class="color-1"><b>Reserviert</b></h1>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+
+
 </div>
 
 <script>
 
     new Vue({
-        el: '#figts-app',
+        el: '#gifts-app',
         data: {
-            guests: [],
+            gifts: [],
         },
-        methods: {},
+        methods: {
+            reserve: function (gift_id) {
+                var self = this
+
+                for (var ii = 0; ii < this.gifts.length; ii++) {
+
+                    if (this.gifts[ii].id === gift_id && this.gifts[ii].group_id === null) {
+
+                        $.post("/reserve_gift", {
+                            "gift_id": gift_id,
+                        }).done(function (data, status) {
+                            console.log(self.gifts[ii])
+                            self.gifts[ii].group_id = self.group_id
+                            console.log(self.gifts[ii])
+                        });
+
+                        break
+                    }
+                }
+            },
+            unreserve: function (gift_id) {
+                var self = this
+
+                for (var ii = 0; ii < this.gifts.length; ii++) {
+
+                    if (this.gifts[ii].id === gift_id && this.gifts[ii].group_id === this.group_id) {
+
+                        $.post("/unreserve_gift", {
+                            "gift_id": gift_id,
+                        }).done(function (data, status) {
+                            self.gifts[ii].group_id = null
+                        });
+
+                        break
+                    }
+                }
+
+            }
+
+
+        },
+        created: function () {
+            // @formatter:off
+            this.gifts = {{ gifts | tojson }}
+            this.group_id = {{ group_id | tojson }}
+            // @formatter:on
+        },
 
 
         delimiters: ["[[", "]]"]

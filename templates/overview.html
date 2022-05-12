@@ -36,161 +36,58 @@
 
 <div id="admin-app">
 
-    <h1>Overview</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>group#</th>
+            <th>guest#</th>
+            <th>group</th>
+            <th>name</th>
+            <th>Freie Trauung & Feier</th>
+            <th>Katerfrühstück</th>
+            <th>Standesamt</th>
+            <th>Get-Together</th>
+        </tr>
+        </thead>
+        <tbody>
 
-    <div class="card-holder">
-
-        <div v-for="group in groups"
-             v-bind:class="{card:true, unfocused:(group_edit != null && group.id != group_edit)}">
-
-            <div class="card-header">
-
-                <div class="row">
-                    <div class="col-5">
-                        <h1 v-if="group.users.length > 1">[[ group.name ]]</h1>
-                    </div>
-                    <div class="col-3">
-                        <h3>[[ group.token ]]</h3>
-                    </div>
-
-                    <div class="col-2">
-
-                        <button v-if="group_edit == group.id"
-                                v-on:click="delete_group(group.id)"
-                                class="btn btn-danger">
-                            <i class="fas fa-trash-alt fa-2x"></i>
-                        </button>
-                    </div>
-                    <div class="col-2">
-
-                        <button v-if="group_edit == group.id"
-                                v-on:click="group_edit = null"
-                                class="btn btn-primary">
-                            <i class="fas fa-save fa-2x"></i>
-                        </button>
-
-                        <button v-else
-                                v-on:click="group_edit == null ? group_edit = group.id : null"
-                                class="btn btn-primary">
-                            <i class="fas fa-edit fa-2x"></i>
-                        </button>
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th v-for="count in rsvp_counts">
+                <span class="text-success">[[count[0] ]]</span>
+                <span class="text-danger">[[count[1] ]]</span>
+                <span class="text-warning">[[count[2] ]]</span>
+            </th>
 
 
-                    </div>
-                </div>
+        </tr>
 
+        <template v-for="group in groups">
+            <template v-for="(guest, idx_guest) in group.users">
+                <tr>
+                    <th v-if="idx_guest == 0">[[group.id]]</th>
+                    <th v-else></th>
+                    <th>[[guest.id]]</th>
+                    <th v-if="idx_guest == 0">[[group.name]]</th>
+                    <th v-else></th>
 
-            </div>
+                    <th>[[guest.name]]</th>
+                    <template v-for="(count,idx_event) in 4">
+                        <th v-if="idx_event in guest.rsvp"
+                            :class="[{'table-success': guest.rsvp[idx_event] === true, 'table-danger': guest.rsvp[idx_event] === false, 'table-warning': guest.rsvp[idx_event] === null}]"></th>
+                        <th v-else class="table-secondary"></th>
+                    </template>
 
-            <div class="card-body list-group list-group-flush">
-                <li v-for="guest in group.users"
-                    class="list-group-item">
+                </tr>
 
-                    <div class="row">
-                        <div class="col-8">
-                            <h1>[[guest.name]]</h1>
-                        </div>
+            </template>
+        </template>
+        <tbody>
+    </table>
 
-                        <div class="col-3">
-
-                            <div class="btn-group btn-group-toggle"
-                                 data-toggle="buttons">
-                                <button v-on:click="choose_yes(guest.id, group.id)"
-                                        v-bind:class="{'btn':true, 'btn-secondary':true, 'btn-success':guest.rsvp, 'disabled': group_edit != group.id}">
-                                    <i class="fas fa-check fa-2x"></i>
-                                </button>
-
-                                <button v-on:click="choose_no(guest.id, group.id)"
-                                        v-bind:class="{'btn':true, 'btn-secondary':true, 'btn-danger':(!guest.rsvp && guest.rsvp != null), 'disabled': group_edit != group.id}">
-                                    <i class="fas fa-times fa-2x"></i>
-                                </button>
-
-                            </div>
-
-                        </div>
-                    </div>
-                </li>
-            </div>
-
-        </div>
-
-        <div v-if="show_add_group_form" class="card">
-            <div class="card-header">
-
-                <div class="row">
-                    <div class="col-7">
-
-                        <input type="text"
-                               class="form-control"
-                               :disabled="group_edit_guests.length === 1"
-                               v-bind:placeholder="group_edit_guests.length > 1 ? [[ group_edit_placeholder ]] : [[ group_edit_guests[0] ]]">
-                    </div>
-                    <div class="col-5">
-                        <h1>[[group_token]]</h1>
-                    </div>
-                </div>
-
-            </div>
-            <div class="card-body">
-
-                <li v-for="(new_guest, index) in group_edit_guests"
-                    class="list-group-item">
-
-                    <div class="row">
-                        <div class="col-10">
-                            <input v-model="group_edit_guests[index]"
-                                   type="text" class="form-control"
-                                   :placeholder="'Gast ' + [[ index + 1 ]]">
-                        </div>
-
-                        <div v-if="index || group_edit_guests.length > 1"
-                             class="col-1">
-
-
-                            <button v-on:click="group_edit_guests.splice(index, 1)"
-                                    class="btn btn-danger">
-                                <i class="fas fa-trash-alt fa-2x"></i>
-                            </button>
-
-                        </div>
-                    </div>
-                </li>
-
-                <button v-on:click="add_guest()"
-                        class="btn btn-success">
-                    <i class="fas fa-user-plus fa-2x"></i>
-                </button>
-
-
-            </div>
-            <div class="card-footer">
-                <div class="row">
-                    <div class="col-10">
-                    </div>
-                    <div class="col-1">
-
-                        <button v-on:click="close_group_creator(false)"
-                                class="btn btn-danger">
-                            <i class="fas fa-trash-alt fa-2x"></i>
-                        </button>
-                    </div>
-                    <div class="col-1">
-                        <button v-on:click="close_group_creator(true)"
-                                class="btn btn-primary">
-                            <i class="fas fa-save fa-2x"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <button v-else v-on:click="open_group_creator()"
-                class="btn btn-outline-success">
-            <i class="fas fa-user-plus fa-5x"></i>
-        </button>
-
-    </div>
 </div>
 
 
@@ -207,185 +104,39 @@
             group_edit_guests: [''],
             group_edit_placeholder: ''
         },
-        methods: {
-            choose_yes: function (guest_id, group_id) {
 
-                if (group_id !== this.group_edit) {
-                    return
-                }
-
-                var self = this
-
-                for (var ii = 0; ii < this.groups.length; ii++) {
-
-                    if (this.groups[ii].id === group_id) {
-
-                        console.log(this.groups[ii].name)
-                        console.log(this.groups[ii].users.length)
-
-                        for (var jj = 0; jj < this.groups[ii].users.length; jj++) {
-
-                            console.log(jj + " " + this.groups[ii].users.name)
-
-                            if (this.groups[ii].users[jj].id === guest_id) {
-
-                                console.log(this.groups[ii].users[jj].name)
-
-                                var new_choice = true
-
-                                if (this.groups[ii].users[jj].rsvp === true) {
-                                    new_choice = null
-                                }
-
-                                $.post("/update_rsvp", {
-                                    "id": guest_id,
-                                    "choice": new_choice
-                                }).done(function (data, status) {
-                                    self.groups[ii].users[jj].rsvp = new_choice
-                                });
-                                break
-
-                            }
-
-                        }
-
-                        break
-                    }
-                }
-            },
-            choose_no: function (guest_id, group_id) {
-
-                if (group_id !== this.group_edit) {
-                    return
-                }
-
-                var self = this
-
-                for (var ii = 0; ii < this.groups.length; ii++) {
-
-                    if (this.groups[ii].id === group_id) {
-
-                        for (var jj = 0; jj < this.groups[ii].users.length; jj++) {
-
-                            if (this.groups[ii].users[jj].id === guest_id) {
-
-                                var new_choice = false
-
-                                if (this.groups[ii].users[jj].rsvp === false) {
-                                    new_choice = null
-                                }
-
-                                $.post("/update_rsvp", {
-                                    "id": guest_id,
-                                    "choice": new_choice
-                                }).done(function (data, status) {
-                                    self.groups[ii].users[jj].rsvp = new_choice
-                                });
-                                break
-
-                            }
-
-                        }
-
-                        break
-                    }
-                }
-            },
-            delete_group: function (group_id) {
-
-                var self = this
-
-                for (var ii = 0; ii < this.groups.length; ii++) {
-
-                    if (this.groups[ii].id === group_id) {
-
-
-                        $.post("/delete_group", {
-                            "id": group_id
-                        }).done(function (data, status) {
-                            self.groups.splice(ii, 1);
-                            self.group_edit = null;
-
-                        });
-                        break
-
-
-                    }
-
-                }
-
-            },
-            open_group_creator: function () {
-                this.show_add_group_form = true;
-                this.group_token = this.create_token(8)
-                this.group_edit_placeholder = 'Gruppe ' + this.create_token(5)
-            },
-            close_group_creator: function (save) {
-
-                var self = this
-
-                this.remove_empty_guests()
-
-                if (this.group_edit_name === "") {
-                    if (this.group_edit_guests.length > 1) {
-                        this.group_edit_name = this.group_edit_placeholder
-                    } else {
-                        this.group_edit_name = this.group_edit_guests[0]
-                    }
-                }
-
-                console.log(this.group_edit_name)
-                console.log(this.group_edit_guests)
-
-                if (save) {
-                    $.post("/create_group", {
-                        "name": this.group_edit_name,
-                        "token": this.group_token,
-                        "user_names": this.group_edit_guests
-                    }).done(function (data, status) {
-
-                        console.log(data)
-
-                        self.groups.push(data)
-                    });
-                }
-
-                // reset
-                this.show_add_group_form = null,
-                this.group_edit_name = '',
-                this.group_token = null,
-                this.group_edit_guests = [''],
-                this.group_edit_placeholder = ''
-
-            },
-            create_token: function (length) {
-                var result = '';
-                var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-                var charactersLength = characters.length;
-                for (var i = 0; i < length; i++) {
-                    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-                }
-                return result;
-            },
-            add_guest: function () {
-
-                this.remove_empty_guests()
-
-                this.group_edit_guests.push('')
-            },
-            remove_empty_guests: function () {
-                for (var ii = 0; ii < this.group_edit_guests.length; ii++) {
-                    if (this.group_edit_guests[ii] == "") {
-                        this.group_edit_guests.splice(ii, 1)
-                        ii--
-                    }
-                }
-            }
-        },
         created: function () {
             // @formatter:off
             this.groups = {{ groups | tojson }}
             // @formatter:on
+        },
+
+        computed: {
+            rsvp_counts: function () {
+
+                counts = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+
+                for (const [_, group] of Object.entries(this.groups)) {
+                    for (const [_, user] of Object.entries(group.users)) {
+
+                        for (const [_, event] of Object.entries(group.events)) {
+
+                            if (user.rsvp[event]) {
+                                counts[event][0] += 1
+                            } else if (user.rsvp[event] === false) {
+                                counts[event][1] += 1
+                            } else {
+                                counts[event][2] += 1
+                            }
+
+
+                        }
+
+                    }
+                }
+
+                return counts
+            }
         },
 
 

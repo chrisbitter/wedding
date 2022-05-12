@@ -1,0 +1,125 @@
+{% extends 'layout.html' %}
+{% block page_content %}
+
+<style>
+
+    @import "{{ url_for('static', filename='css/home.css') }}";
+
+</style>
+
+<div id="home-app" class="align-self-center w-100 h-100  d-flex flex-column">
+
+
+    <div class="photobanner"><img v-for="(image, idx) in images" :src="image"
+                                  alt="...">
+    </div>
+
+    <div class="flex-grow-1 d-flex row">
+        <div class="col align-self-center">
+            <h2 class="color-1">
+                <span v-if="guests.length === 1">
+                    Liebe<span v-show="guests[0].male">r</span> [[guests[0].name]]!
+                </span>
+                <span v-else-if="guests.length === 2">
+                    Liebe<span v-show="guests[0].male">r</span> [[guests[0].name]], liebe<span
+                        v-show="guests[1].male">r</span> [[guests[1].name]]!
+                </span>
+                <span v-else>
+                    Liebe Familie [[group_name]]!
+                </span>
+            </h2>
+            <br>
+            <h4>
+                Wir hatten eine traumhafte Hochzeit, nicht zuletzt dank <span
+                    v-if="guests.length === 1">Dir</span><span
+                    v-else>Euch</span>!
+                <br>
+                <br>
+
+                Für all <span v-if="guests.length === 1">deine</span><span
+                    v-else>eure</span> Glückwünsche und Geschenke möchten wir
+                uns ganz herzlich bedanken.
+                <br>
+                <br>
+
+                Ihr habt es geschafft, diesen Tag für uns unvergesslich zu
+                machen.
+                <br>
+                <br>
+
+                Danke!
+
+                <br><br>
+                <h3 class="color-1">Kristina & Christian</h3>
+
+
+            </h4>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+    new Vue({
+        el: '#home-app',
+        data: {
+            images: [],
+            guests: [],
+            group_name: "",
+        },
+        created: function () {
+            // @formatter:off
+            this.images = {{ images | tojson }}
+            this.guests = {{ users | tojson }}
+            this.group_name = {{ group_name | tojson }}
+            // @formatter:on
+        },
+        mounted: function () {
+            const speed = 2; // 2 pixels per frame at 60 frames per second
+            const banner = document.getElementsByClassName('photobanner')[0];
+            const padding = 50
+
+            // build images array
+            let images = [
+                ...banner.getElementsByTagName('img')
+            ];
+
+
+            let offsetLeft = 0
+
+            for (let i = 0; i < images.length; i++) {
+                images[i].onload = () => {
+
+                    images[i].style.left = offsetLeft + "px"
+
+                    offsetLeft += images[i].width + padding
+                }
+            }
+
+            function animate() {
+                const l = images.length;
+                for (let i = 0; i < l; i++) {
+                    const img = images[i];
+
+                    img.style.left = (parseInt(img.style.left, 10) - speed) + "px";
+
+                    if (parseInt(img.style.left, 10) + img.width < 0) {
+                        // this image if fully overflowing left, put it at the end of the image list both in position and in images and rects
+                        const prevImg = images[(i - 1 + images.length) % images.length]
+                        img.style.left = (parseInt(prevImg.style.left, 10)  + prevImg.width + padding) + "px";
+                    }
+                }
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        },
+        delimiters: ["[[", "]]"]
+    })
+
+
+</script>
+
+
+{% endblock page_content%}

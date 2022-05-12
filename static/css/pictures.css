@@ -1,0 +1,36 @@
+.photobanner {
+    position: relative;
+    height: 200px;
+    width: 100%;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+.photobanner img {
+    top: 0px;
+    height: 100%;
+    /*width: 350px;*/
+    box-shadow: 2px 2px 8px #8a8a8a;
+    position: absolute;
+
+    image-orientation: from-image;
+}
+
+button {
+    /*font-family: "Notable", sans-serif;*/
+    /*text-transform: uppercase;*/
+    outline: 0;
+    background: var(--color-3);
+    width: 100%;
+    border: 0;
+    padding: 15px;
+    color: #FFFFFF;
+    /*font-size: 14px;*/
+    -webkit-transition: all 0.3 ease;
+    transition: all 0.3 ease;
+    cursor: pointer;
+}
+
+button:hover, button:active, button:focus {
+    background: var(--color-1);
+}

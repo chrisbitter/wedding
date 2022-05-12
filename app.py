@@ -1,4 +1,7 @@
+import argparse
+import logging
 import os
+import random
 from http import HTTPStatus
 from urllib.parse import urlparse, urljoin
 
@@ -11,62 +14,113 @@ from flask_login import LoginManager, login_required, \
 from config import Config
 from forms import LoginForm
 
-path_agenda = "resources/agenda.csv"
+parser = argparse.ArgumentParser(description="Wedding Website")
+parser.add_argument("--init", action='store_true', help="Initialize Service.")
+args, leftovers = parser.parse_known_args()
+
 path_events = "resources/events.csv"
-path_images = "static/img"
+path_guest_list = "resources/guests.csv"
+path_gifts = "resources/gifts.csv"
+path_images_home = "static/img/home"
+path_images_thanks = "static/img/thanks"
+path_images_fotobox = "static/img/fotobox"
+path_images_fotograph = "static/img/fotograph"
+path_images_drone = "static/img/drone"
+path_images_gifts = "static/img/gifts"
+log_file = "app.log"
+
+logging.basicConfig(filename=log_file, level=logging.DEBUG,
+                    format="%(asctime)s\t\t%(levelname)s\t\t%(message)s")
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
-from models import Group, Guest, db
+from models import Group, Guest, Gift, db
 
 db.init_app(app)
 
-debug = True
 
-if debug:
+# with app.app_context():
+#     # db.drop_all()
+#     db.create_all()
+
+
+def create_group(df_group):
+    name = df_group.group.values[0]
+    standesamt = df_group.standesamt.values[0]
+    token = df_group.token.values[0]
+
+    group = Group(name=name, standesamt=standesamt == 1., token=token)
+
+    db.session.add(group)
+    db.session.commit()
+
+    app.logger.info(f"Add Group: {group}")
+
+    for _, guest in df_group.iterrows():
+        guest = Guest(group_id=group.id, name=guest["name"], male=guest.male)
+        db.session.add(guest)
+        db.session.commit()
+
+        app.logger.info(f"Add Guest: {guest}")
+
+
+if args.init:
+
+    app.logger.info("Initialize database")
+
     with app.app_context():
         db.drop_all()
         db.create_all()
 
-        events_all = "[0,1,2,3]"
-        events_limited = "[0,1,3]"
-
-        # only for debugging
-        group_id = 0
         group_name = "Team Nerz"
-        token = "nerz"
-        group = Group(id=group_id, name=group_name, token=token, admin=True,
+        token = "WuselSchmusel.agency"
+        group = Group(name=group_name, token=token, admin=True,
                       standesamt=True)
         db.session.add(group)
-        nerz1 = Guest(group_id=group_id, name='Kristina Bitter')
-        nerz2 = Guest(group_id=group_id, name='Christian Scheiderer')
-        db.session.add(nerz1)
-        db.session.add(nerz2)
         db.session.commit()
 
-        group_id = 1
-        group_name = "Familie Dachs"
-        token = "dachs"
-        group = Group(id=group_id, name=group_name, token=token,
-                      standesamt=True)
-        db.session.add(group)
-        dachs1 = Guest(group_id=group_id, name='Sir Dachs')
-        dachs2 = Guest(group_id=group_id, name='Mrs Dachs')
-        dachs3 = Guest(group_id=group_id, name='Frechdachs')
-        db.session.add(dachs1)
-        db.session.add(dachs2)
-        db.session.add(dachs3)
+        db.session.add(Guest(group_id=group.id, name='Kristina', male=False))
+        db.session.add(Guest(group_id=group.id, name='Christian', male=True))
         db.session.commit()
 
-        group_id = 2
-        group_name = "Fuchs"
-        token = "fuchs"
-        group = Group(id=group_id, name=group_name, token=token,
-                      standesamt=False)
-        db.session.add(group)
-        fuchs = Guest(group_id=group_id, name='Mr. Fuchs')
-        db.session.add(fuchs)
+        df_guests = pd.read_csv(path_guest_list, sep=";", encoding='latin1')
+
+        df_guests.dropna(axis=0, how='all', inplace=True)
+        df_guests.dropna(axis=1, how='all', inplace=True)
+
+        group_indices = list(df_guests.group.dropna().index.values)
+
+        group_indices.append(df_guests.shape[0])
+
+        for idxA, idxB in zip(group_indices[:-1], group_indices[1:]):
+            df_group = df_guests.loc[idxA:idxB - 1]
+
+            create_group(df_group)
+
+    exit()
+
+with app.app_context():
+    db.create_all()
+
+    df_gifts = pd.read_csv(path_gifts)
+
+    for gift_index, gift_row in df_gifts.iterrows():
+        gift_dict = gift_row.to_dict()
+        gift_dict["image"] = os.path.join(path_images_gifts,
+                                          gift_dict["image"])
+
+        gift = Gift.query.filter_by(id=gift_index).first()
+
+        if not gift:
+            gift = Gift(**gift_dict)
+        else:
+
+            for key, value in gift.serialize.items():
+                if key in gift_dict:
+                    setattr(gift, key, gift_dict[key])
+
+        db.session.add(gift)
         db.session.commit()
 
 
@@ -119,14 +173,6 @@ def get_all_groups():
     return result
 
 
-def get_agenda():
-    agenda = pd.read_csv(path_agenda)
-
-    agenda_items = agenda.to_dict(orient="records")
-
-    return agenda_items
-
-
 def get_events_information(group_events=None):
     events_information = pd.read_csv(path_events)
 
@@ -139,9 +185,6 @@ def get_events_information(group_events=None):
     if group_events is not None:
         events_information = [event for event in events_information if
                               event["id"] in group_events]
-
-    print(events_information)
-
 
     return events_information
 
@@ -170,8 +213,62 @@ def agenda():
 @app.route('/')
 def index():
     # redirect(url_for('rsvp'))
-    return redirect(url_for('home'))
+    return redirect(url_for('thanks'))
 
+
+@app.route('/thanks')
+@login_required
+def thanks():
+    group = current_group
+
+    users = get_users(group.id)
+
+    images = [os.path.join(path_images_thanks, img) for img in
+              os.listdir(path_images_thanks)]
+
+    random.shuffle(images)
+
+    is_admin = current_group.is_admin()
+
+    return render_template('thanks.html', title='031020',
+                           active_page="thanks", is_admin=is_admin,
+                           images=images, group_name=group.name, users=users)
+
+
+@app.route('/pictures')
+@login_required
+def pictures():
+    group = current_group
+
+    users = get_users(group.id)
+
+    images_fotobox = [os.path.join(path_images_fotobox, img) for img in
+              os.listdir(path_images_fotobox)][:50]
+
+    images_fotograph = [os.path.join(path_images_fotograph, img) for img in
+              os.listdir(path_images_fotograph)]
+
+    images_drone = [os.path.join(path_images_drone, img) for img in
+              os.listdir(path_images_drone)]
+
+    random.shuffle(images_fotobox)
+    random.shuffle(images_fotograph)
+    random.shuffle(images_drone)
+
+    is_admin = current_group.is_admin()
+
+    return render_template('pictures.html', title='031020',
+                           active_page="pictures", is_admin=is_admin,
+                           images_fotobox=images_fotobox,
+                           images_fotograph=images_fotograph,
+                           images_drone=images_drone,
+                           group_name=group.name, users=users)
+#
+#
+# @app.route('/download_fotobox')
+# def download_fotobox ():
+#     path = "/Examples.pdf"
+#     return send_file(path, as_attachment=True)
 
 @app.route('/home')
 @login_required
@@ -180,8 +277,10 @@ def home():
 
     users = get_users(group.id)
 
-    images = [os.path.join(path_images, img) for img in
-              os.listdir(path_images)]
+    images = [os.path.join(path_images_home, img) for img in
+              os.listdir(path_images_home)]
+
+    random.shuffle(images)
 
     is_admin = current_group.is_admin()
 
@@ -241,9 +340,58 @@ def update_rsvp():
 def gifts():
     is_admin = current_group.is_admin()
 
-    return render_template('gifts.html', title='Wünsche',
-                           active_page="gifts", is_admin=is_admin)
+    gifts = [gift.serialize for gift in Gift.query.all()]
 
+    gifts_reserved_self = []
+    gifts_reserved = []
+    gifts_unreserved = []
+
+    for gift in gifts:
+        if gift["group_id"]:
+            if gift["group_id"] == current_group.id:
+                gifts_reserved_self.append(gift)
+            else:
+                gifts_reserved.append(gift)
+        else:
+            gifts_unreserved.append(gift)
+
+    gifts_sorted = gifts_reserved_self + gifts_unreserved + gifts_reserved
+
+    return render_template('gifts.html', title='Wünsche', active_page="gifts",
+                           group_id=current_group.id, gifts=gifts_sorted,
+                           is_admin=is_admin)
+
+
+@app.route('/reserve_gift', methods=['POST'])
+@login_required
+def reserve_gift():
+    gift_id = request.form["gift_id"]
+
+    gift = Gift.query.filter_by(id=gift_id).first()
+
+    gift.group_id = current_group.id
+
+    db.session.commit()
+
+    app.logger.info(f"Update Gift {gift}")
+
+    return "", HTTPStatus.NO_CONTENT
+
+
+@app.route('/unreserve_gift', methods=['POST'])
+@login_required
+def unreserve_gift():
+    gift_id = request.form["gift_id"]
+
+    gift = Gift.query.filter_by(id=gift_id).first()
+
+    gift.group_id = None
+
+    db.session.commit()
+
+    app.logger.info(f"Update Gift {gift}")
+
+    return "", HTTPStatus.NO_CONTENT
 
 
 @app.route('/corona')
@@ -266,7 +414,8 @@ def hotels():
 
     is_admin = current_group.is_admin()
 
-    return render_template('hotels.html', title='Hotels', events_information=events_information,
+    return render_template('hotels.html', title='Hotels',
+                           events_information=events_information,
                            active_page="hotels", is_admin=is_admin)
 
 
@@ -275,8 +424,6 @@ def hotels():
 def overview():
     if current_group.is_admin():
         groups = get_all_groups()
-
-        print(groups)
 
         is_admin = current_group.is_admin()
 
@@ -305,7 +452,7 @@ def create_group():
         db.session.add(group)
         db.session.commit()
 
-        app.logger.info(f"Create group {group}")
+        app.logger.info(f"Add group: {group}")
 
         group_id = group.id
 
@@ -313,7 +460,7 @@ def create_group():
             guest = Guest(group_id=group_id, name=user_name)
             db.session.add(guest)
 
-            app.logger.info(f"Create guest {guest}")
+            app.logger.info(f"Add guest: {guest}")
 
         db.session.commit()
 
@@ -365,6 +512,8 @@ def is_safe_url(target):
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
+    app.logger.debug(f"Logout {current_group}")
+
     logout_user()
     return redirect(url_for('login'))
 
@@ -380,26 +529,21 @@ def login():
 
         group = Group.query.filter_by(token=form.token.data).first()
 
-        app.logger.info(f"Login {group}")
+        app.logger.debug(f"Login {group}")
 
         if group is None:  # or not user.check_password(form.password.data):
             return redirect(url_for('login'))
         else:
-            app.logger.debug("login successful")
-
             next = flask.request.args.get('next')
             # is_safe_url should check if the url is safe for redirects.
             # See http://flask.pocoo.org/snippets/62/ for an example.
-
-            app.logger.debug(next)
-            app.logger.debug(is_safe_url(next))
 
             if not is_safe_url(next):
                 return flask.abort(400)
 
             login_user(group)
 
-            return flask.redirect(next or flask.url_for('rsvp'))
+            return flask.redirect(next or flask.url_for('home'))
     return flask.render_template('login.html', form=form, title='Login')
 
 
@@ -410,4 +554,6 @@ def page_not_found(e):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False)
+    app.run(debug=True, use_reloader=False, port=5050)
+    # waitress.serve(app, host="0.0.0.0", port=5050)
+    # waitress.serve(app, host="0.0.0.0", port=5050, url_scheme='https')

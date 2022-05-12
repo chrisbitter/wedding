@@ -2,23 +2,8 @@
 {% block page_content %}
 
 <style>
-    .photobanner {
-        position: relative;
-        height: 233px;
-        width: 100%;
-        margin-bottom: 30px;
-    }
 
-    .photobanner img {
-        top: 0px;
-        height: 100%;
-        /*width: 350px;*/
-        box-shadow: 2px 2px 8px #8a8a8a;
-        position: absolute;
-
-        image-orientation: from-image;
-    }
-
+@import "{{ url_for('static', filename='css/home.css') }}";
 
 </style>
 
@@ -35,9 +20,11 @@
                 <span v-if="guests.length === 1">
                     Liebe<span v-show="guests[0].male">r</span> [[guests[0].name]]!
                 </span>
-
+                <span v-else-if="guests.length === 2">
+                    Liebe<span v-show="guests[0].male">r</span> [[guests[0].name]], liebe<span v-show="guests[1].male">r</span> [[guests[1].name]]!
+                </span>
                 <span v-else>
-                    Liebe [[group_name]]!
+                    Liebe Familie [[group_name]]!
                 </span>
             </h2>
 

@@ -1,0 +1,226 @@
+{% extends 'layout.html' %}
+{% block page_content %}
+
+<style>
+
+    @import "{{ url_for('static', filename='css/pictures.css') }}";
+
+</style>
+
+<div id="home-app" class="align-self-center w-100 h-100  d-flex flex-column">
+
+
+    <div class="flex-grow-1 d-flex row w-100">
+        <div class="col align-self-center">
+            <div class="card">
+                <h5 class="card-header">Fotos von Markus Brake</h5>
+
+
+                <div class="photobanner">
+
+                    <img v-for="(image, idx) in images_fotograph"
+                         :src="image"
+                         alt="...">
+                </div>
+<!--                <p>-->
+<!--                    Hinweis: Die Bilder sind sehr groß. <br>-->
+<!--                    Daher müssen 15 Dateien (fotograph.zip + fotograph.z{01-14}) runtergeladen werden. <br>-->
+<!--                    Danach fotograph.zip entpacken.-->
+<!--                </p>-->
+                <a href="https://gigamove.rz.rwth-aachen.de/d/id/v3Yi8Rd4FppeEa/dd/100" class="link" download>
+                    <button>Download Teil 1</button>
+                </a>
+                <a href="https://gigamove.rz.rwth-aachen.de/d/id/3JfK93wTcP7yp6/dd/100" class="link" download>
+                    <button>Download Teil 2</button>
+                </a>
+                <a href="https://gigamove.rz.rwth-aachen.de/d/id/6BfekJSmKAdsbg/dd/100" class="link" download>
+                    <button>Download Teil 3</button>
+                </a>
+                <a href="https://gigamove.rz.rwth-aachen.de/d/id/ztkQoNp8kMSPMk/dd/100" class="link" download>
+                    <button>Download Teil 4</button>
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="flex-grow-1 d-flex row mt-3 w-100">
+        <div class="col align-self-center">
+            <div class="card">
+                <h5 class="card-header">Fotobox</h5>
+
+                <div class="photobanner">
+
+                    <img v-for="(image, idx) in images_fotobox"
+                         :src="image"
+                         alt="...">
+                </div>
+                <a href="https://gigamove.rz.rwth-aachen.de/d/id/qQRa5YVrGLBfi3/dd/100"
+                   download>
+                    <button>Download</button>
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="flex-grow-1 d-flex row mt-3 w-100">
+        <div class="col align-self-center">
+            <div class="card">
+                <h5 class="card-header">Drohnenbilder & -videos von Timon
+                    Vogler</h5>
+
+                <div class="photobanner">
+
+                    <img v-for="(image, idx) in images_drone"
+                         :src="image"
+                         alt="...">
+                </div>
+                <a href="https://gigamove.rz.rwth-aachen.de/d/id/cvUBNYvDM5BxLH/dd/100" class="link" download>
+                    <button>Download Teil 1</button>
+                </a>
+                <a href="https://gigamove.rz.rwth-aachen.de/d/id/H8BjfQHUedpWPp/dd/100" class="link" download>
+                    <button>Download Teil 2</button>
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="flex-grow-1 d-flex row mt-3 w-100">
+        <div class="col align-self-center">
+
+            <i class="fas fa-camera-retro fa-6x color-1 mt-5 mb-5"></i>
+
+            <h2 class="mb-5">
+
+                Du hast schöne Fotos gemacht, die du mit uns teilen
+                möchtest?<br>
+                Schicke sie uns an <a class="color-1"
+                                      href="mailto:hochzeit031020@gmail.com">hochzeit031020@gmail.com</a>!
+
+            </h2>
+        </div>
+    </div>
+
+
+    <!--        <div class="input-group">-->
+    <!--            <div class="custom-file">-->
+    <!--                <input type="file" multiple class="custom-file-input"-->
+    <!--                       id="inputGroupFile01"-->
+    <!--                       aria-describedby="inputGroupFileAddon01">-->
+    <!--                <label class="custom-file-label" for="inputGroupFile01">Lade-->
+    <!--                    deine-->
+    <!--                    Bilder hoch!</label>-->
+    <!--            </div>-->
+    <!--        </div>-->
+
+</div>
+
+<script>
+
+    new Vue({
+        el: '#home-app',
+        data: {
+            images_fotobox: [],
+            images_fotograph: [],
+            images_drohne: [],
+            group_name: "",
+        },
+        created: function () {
+            // @formatter:off
+            this.images_fotobox = {{ images_fotobox | tojson }}
+            this.images_fotograph = {{ images_fotograph | tojson }}
+            this.images_drone = {{ images_drone | tojson }}
+            this.group_name = {{ group_name | tojson }}
+            // @formatter:on
+        },
+        methods: {
+            download_fotograph: function () {
+
+                var urls = [
+                    "{{ url_for('static', filename='img/download/fotograph.zip') }}"
+                ];
+
+                for (var i = 1; i < 15; i++) {
+                    number = i.toString()
+                    if (i < 10) {
+                        number = "0" + number
+                    }
+                    url = "{{ url_for('static', filename='img/download/fotograph.z') }}" + number
+                    urls.push(url)
+                }
+
+
+                // link.setAttribute('download', null);
+
+
+                for (var i = 0; i < urls.length; i++) {
+
+                    setTimeout(function (url) {
+                        console.log("download " + url)
+                        var link = document.createElement('a');
+                        link.style.display = 'none';
+                        document.body.appendChild(link);
+
+                        link.setAttribute('href', url);
+                        link.click();
+                        document.body.removeChild(link);
+
+                    }, 200 + i * 1000, urls[i]);
+                }
+
+
+            }
+
+        },
+        mounted: function () {
+            const speed = 2; // 2 pixels per frame at 60 frames per second
+            const padding = 5;
+
+            const banners = document.getElementsByClassName('photobanner');
+
+            for (let bb = 0; bb < banners.length; bb++) {
+                const banner = banners[bb]
+                // build images array
+                let images = [
+                    ...banner.getElementsByTagName('img')
+                ];
+
+                let offsetLeft = 0
+
+                for (let i = 0; i < images.length; i++) {
+                    images[i].onload = () => {
+
+                        images[i].style.left = offsetLeft + "px"
+
+                        offsetLeft += images[i].width + padding
+                    }
+                }
+
+                function animate() {
+                    const l = images.length;
+                    for (let i = 0; i < l; i++) {
+                        const img = images[i];
+
+                        img.style.left = (parseInt(img.style.left, 10) - speed) + "px";
+
+                        if (parseInt(img.style.left, 10) + img.width < 0) {
+                            // this image if fully overflowing left, put it at the end of the image list both in position and in images and rects
+                            const prevImg = images[(i - 1 + images.length) % images.length]
+                            img.style.left = (parseInt(prevImg.style.left, 10) + prevImg.width + padding) + "px";
+                        }
+                    }
+                    requestAnimationFrame(animate);
+                }
+
+                animate();
+            }
+        },
+        delimiters: ["[[", "]]"]
+    })
+
+</script>
+
+
+{% endblock page_content%}

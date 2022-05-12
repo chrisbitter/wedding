@@ -13,8 +13,10 @@
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
           crossorigin="anonymous">
 
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/login.css') }}">
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='css/login.css') }}">
     <title>031020</title>
 </head>
 
@@ -62,6 +64,7 @@
 <script>
     function getTimeRemaining(endtime) {
         var t = Date.parse(endtime) - Date.parse(new Date());
+        console.log(t)
         var seconds = Math.floor((t / 1000) % 60);
         var minutes = Math.floor((t / (1000 / 60)) % 60);
         var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
@@ -101,20 +104,27 @@
         function updateClock() {
             var t = getTimeRemaining(endtime);
 
-            //yearsSpan.innerHTML = t.years;
-            daysSpan.innerHTML = t.days;
-            hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
-            minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
-            secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
+            if (t.total > 0) {
 
-            //adjustLabel(labelYearsDiv, "Year", t.years);
-            adjustLabel(labelDaysDiv, "Day", t.days);
-            adjustLabel(labelHoursDiv, "Hour", t.hours);
-            adjustLabel(labelMinutesDiv, "Minute", t.minutes);
-            adjustLabel(labelSecondsDiv, "Second", t.seconds);
+                //yearsSpan.innerHTML = t.years;
+                daysSpan.innerHTML = t.days;
+                hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
+                minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
+                secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
 
-            if (t.total <= 0) {
+                //adjustLabel(labelYearsDiv, "Year", t.years);
+                adjustLabel(labelDaysDiv, "Day", t.days);
+                adjustLabel(labelHoursDiv, "Hour", t.hours);
+                adjustLabel(labelMinutesDiv, "Minute", t.minutes);
+                adjustLabel(labelSecondsDiv, "Second", t.seconds);
+
+            } else {
                 clearInterval(timeinterval);
+
+                daysSpan.parentElement.style.display = 'none';
+                hoursSpan.innerHTML = ('03');
+                minutesSpan.innerHTML = ('10');
+                secondsSpan.innerHTML = ('20');
             }
         }
 
@@ -122,7 +132,7 @@
         var timeinterval = setInterval(updateClock, 1000);
     }
 
-    var deadline = 'October 3 2020 14:00:00 GMT+0200';
+    var deadline = 'October 3 2020 16:00:00 GMT+0200';
 
     initializeClock('clockdiv', deadline);
 

@@ -29,7 +29,6 @@
           type="text/css"
           rel="stylesheet">
 
-
     <title>031020</title>
 </head>
 <body>
@@ -47,7 +46,7 @@
                     <span class="days">10</span>
                 </div>
                 <div>
-                    <span class="hours">2020</span>
+                    <span class="hours">20</span>
                 </div>
             </div>
         </div>
@@ -62,56 +61,56 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav nav-fill w-100">
 
+<!--                <li class="nav-item">-->
+<!--                    <a v-bind:class="['nav-link', {'active':('{{ active_page }}' == 'home')}]"-->
+<!--                       href="{{ url_for('home') }}">Home</a>-->
+<!--                </li>-->
+
                 <li class="nav-item">
-                    <a v-bind:class="['nav-link', {'active':('{{ active_page }}' == 'home')}]"
-                       href="{{ url_for('home') }}">Home</a>
+                    <a v-bind:class="['nav-link', {'active':('{{ active_page }}' == 'thanks')}]"
+                       href="{{ url_for('thanks') }}">Danke</a>
                 </li>
 
                 <li class="nav-item">
-                    <a v-bind:class="['nav-link', {'active':('{{ active_page }}' == 'rsvp')}]"
-                       href="{{ url_for('rsvp') }}">RSVP</a>
+                    <a v-bind:class="['nav-link', {'active':('{{ active_page }}' == 'pictures')}]"
+                       href="{{ url_for('pictures') }}">Bilder</a>
                 </li>
 
-                <li class="nav-item">
-                    <a v-bind:class="['nav-link', {'active':('{{ active_page }}' == 'hotels')}]"
-                       href="{{ url_for('hotels') }}">Hotels</a>
-                </li>
+<!--                <li class="nav-item">-->
+<!--                    <a v-bind:class="['nav-link', {'active':('{{ active_page }}' == 'rsvp')}]"-->
+<!--                       href="{{ url_for('rsvp') }}">RSVP</a>-->
+<!--                </li>-->
 
-                <li class="nav-item">
-                    <a v-bind:class="['nav-link', {'active':('{{ active_page }}' == 'agenda')}]"
-                       href="{{ url_for('agenda') }}">Agenda</a>
-                </li>
+<!--                <li class="nav-item">-->
+<!--                    <a v-bind:class="['nav-link', {'active':('{{ active_page }}' == 'hotels')}]"-->
+<!--                       href="{{ url_for('hotels') }}">Hotels</a>-->
+<!--                </li>-->
 
-                <li class="nav-item">
-                    <a v-bind:class="['nav-link', {'active':('{{ active_page }}' == 'gifts')}]"
-                       href="{{ url_for('gifts') }}">Wünsche</a>
-                </li>
+<!--                <li class="nav-item">-->
+<!--                    <a v-bind:class="['nav-link', {'active':('{{ active_page }}' == 'agenda')}]"-->
+<!--                       href="{{ url_for('agenda') }}">Agenda</a>-->
+<!--                </li>-->
 
-                <li class="nav-item">
-                    <a v-bind:class="['nav-link', {'active':('{{ active_page }}' == 'corona')}]"
-                       href="{{ url_for('corona') }}">Corona</a>
-                </li>
+<!--                <li class="nav-item">-->
+<!--                    <a v-bind:class="['nav-link', {'active':('{{ active_page }}' == 'gifts')}]"-->
+<!--                       href="{{ url_for('gifts') }}">Wünsche</a>-->
+<!--                </li>-->
+
+<!--                <li class="nav-item">-->
+<!--                    <a v-bind:class="['nav-link', {'active':('{{ active_page }}' == 'corona')}]"-->
+<!--                       href="{{ url_for('corona') }}">Corona</a>-->
+<!--                </li>-->
 
                 <li v-if="is_admin" class="nav-item">
-                        <a v-bind:class="['nav-link', {'active':('{{ active_page }}' == 'overview')}]"
-                           href="{{ url_for('overview') }}">Overview</a>
+                    <a v-bind:class="['nav-link', {'active':('{{ active_page }}' == 'overview')}]"
+                       href="{{ url_for('overview') }}">Overview</a>
                 </li>
 
             </ul>
 
-            <ul class="navbar-nav">
+            <ul class="navbar-nav nav-fill">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('logout') }}">
-                        <div class="row">
-                            <div class="col-2">
-                                <i class="fas fa-sign-out-alt"></i>
-                            </div>
-
-                            <div class="col-2">
-                                <span>Logout</span>
-                            </div>
-                        </div>
-                    </a>
+                    <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
 
                 </li>
             </ul>
@@ -183,7 +182,7 @@
     function getTimeRemaining(endtime) {
         var t = Date.parse(endtime) - Date.parse(new Date());
         var seconds = Math.floor((t / 1000) % 60);
-        var minutes = Math.floor((t / (1000 / 60)) % 60);
+        var minutes = Math.floor((t / (1000 * 60)) % 60);
         var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
         var days = Math.floor(t / (1000 * 60 * 60 * 24) % 365);
         var years = Math.floor(t / (1000 * 60 * 60 * 24 * 365));
@@ -221,20 +220,27 @@
         function updateClock() {
             var t = getTimeRemaining(endtime);
 
-            // yearsSpan.innerHTML = t.years;
-            daysSpan.innerHTML = t.days;
-            hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
-            minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
-            secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
+            if (t.total > 0) {
 
-            // adjustLabel(labelYearsDiv, "Year", t.years);
-            adjustLabel(labelDaysDiv, "Day", t.days);
-            adjustLabel(labelHoursDiv, "Hour", t.hours);
-            adjustLabel(labelMinutesDiv, "Minute", t.minutes);
-            adjustLabel(labelSecondsDiv, "Second", t.seconds);
+                //yearsSpan.innerHTML = t.years;
+                daysSpan.innerHTML = t.days;
+                hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
+                minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
+                secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
 
-            if (t.total <= 0) {
+                //adjustLabel(labelYearsDiv, "Year", t.years);
+                adjustLabel(labelDaysDiv, "Day", t.days);
+                adjustLabel(labelHoursDiv, "Hour", t.hours);
+                adjustLabel(labelMinutesDiv, "Minute", t.minutes);
+                adjustLabel(labelSecondsDiv, "Second", t.seconds);
+
+            } else {
                 clearInterval(timeinterval);
+
+                daysSpan.parentElement.style.display = 'none';
+                hoursSpan.innerHTML = ('03');
+                minutesSpan.innerHTML = ('10');
+                secondsSpan.innerHTML = ('20');
             }
         }
 
@@ -242,7 +248,7 @@
         var timeinterval = setInterval(updateClock, 1000);
     }
 
-    var deadline = 'October 3 2020 15:30:00 GMT+0200';
+    var deadline = 'October 3 2020 16:00:00 GMT+0200';
 
     initializeClock('clockdiv', deadline);
 

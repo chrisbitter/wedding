@@ -72,9 +72,9 @@
 
                                     </div>
                                     <div class="card-body">
-                                        <h3>[[event.date]] | [[event.time]]</h3>
+                                        <h3>[[event.date]] |
+                                            [[event.time]]</h3>
                                         <h3>[[event.description]]</h3>
-
 
 
                                     </div>
@@ -222,13 +222,13 @@
         computed: {
             progress: function () {
                 completed_rsvp = 0
-                total_rsvp = 0
+                total_rsvp = this.guests.length * this.events.length
+
+                console.log(total_rsvp)
 
                 for (var ii = 0; ii < this.guests.length; ii++) {
-
-                    for (var jj = 0; jj < this.events.length; jj++) {
-                        total_rsvp += 1
-                        if (this.guests[ii].rsvp[jj] != null) {
+                    for (const [key, value] of Object.entries(this.guests[ii].rsvp)) {
+                        if (value != null) {
                             completed_rsvp += 1
                         }
                     }

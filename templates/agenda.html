@@ -21,19 +21,14 @@
         <div class="col">
             <div class="card p-3">
 
-
-<!--                <span class="fa-stack fa-1x">-->
-<!--  <i class="fa fa-circle fa-stack-2x" :style="iconStyle(active_event.color)"></i>-->
-<!--  <i class="fa fa-star fa-stack-1x" style="color: white"></i>-->
-<!--</span>-->
-<!--                <div class="row"><div class="col">Wann</div><div class="col">[[active_event.date]] | [[active_event.time]]</div></div>-->
-<!--                <div class="row"><div class="col">Was</div><div class="col">[[active_event.description]]</div></div>-->
-<!--                <div class="row"><div class="col">Wo</div><div class="col">[[active_event.location]]</div></div>-->
-<!--                <div class="row"><div class="col">Dresscode</div><div class="col">[[active_event.dresscode]]</div></div>-->
-                <h3><b>Wann</b></h3><h4>[[active_event.date]] | [[active_event.time]]</h4>
+                <h3><b>Wann</b></h3><h4>[[active_event.date]] |
+                [[active_event.time]]</h4>
                 <h3><b>Was</b></h3><h4>[[active_event.description]]</h4>
                 <h3><b>Wo</b></h3><h4>[[active_event.location]]</h4>
-                <h3><b>Dresscode</b></h3><h4>[[active_event.dresscode]]</h4>
+
+                <span v-if="active_event.dresscode">
+                    <h3><b>Dresscode</b></h3><h4>[[active_event.dresscode]]</h4>
+                </span>
 
             </div>
 

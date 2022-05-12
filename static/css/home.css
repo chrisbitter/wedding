@@ -1,0 +1,17 @@
+.photobanner {
+    position: relative;
+    height: 233px;
+    width: 100%;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+.photobanner img {
+    top: 0px;
+    height: 100%;
+    /*width: 350px;*/
+    box-shadow: 2px 2px 8px #8a8a8a;
+    position: absolute;
+
+    image-orientation: from-image;
+}
